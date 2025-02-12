@@ -1203,3 +1203,51 @@ function getCountriesForSelectMenu() {
 
 }
 
+
+
+
+/*
+
+Javascript for Pre-built items 
+
+*/
+
+
+/*
+
+Login form without Create Account option
+
+*/
+
+/* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
+
+function login_box101(centeredBlock) {
+
+    const login_box = div(centeredBlock, {id: "login_box101"});
+    h1(login_box, {innerHTML: "Login"});
+    const login_form = form(login_box, {id: 'login_form101', onsubmit: 'return submitLoginForm();'});
+    input(login_form, {id: 'email101', name: 'email101', type: 'email', placeholder: 'Email'});
+    input(login_form, {id: 'password101', name: 'password101', type: 'password', placeholder: 'Password'});
+    input(login_form, {type: 'submit', value: 'Log In'});
+
+}
+
+function submitLoginForm101() {
+    // Grab form values.
+    var email = document.getElementById('email101').value;
+    var password = document.getElementById('password101').value;
+    
+    // Call the generic AJAX function to send login data.
+    ajaxCall('/login101', 'POST', { email: email, password: password }, function(response) {
+        if(response.success) {
+            alert("Login successful!");
+            // You might call a function here to update the UI or navigate.
+            // e.g., navigate('dashboard');
+        } else {
+            alert("Login failed: " + response.error);
+        }
+    });
+    return false; // Prevent default form submission.
+}
+
+/* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
