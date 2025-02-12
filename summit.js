@@ -35,9 +35,7 @@ function createAndAppendElement(type, attributes, parentElement) {
 
 
 // Function to append html elements stored as a string to a specified parent element
-
 function appendHtmlToParent(htmlString, parentElement) {
-
     // Check if the parent exists in the DOM
     if (parentElement) {
         // Insert the HTML string as the last child of the parent element
@@ -45,11 +43,10 @@ function appendHtmlToParent(htmlString, parentElement) {
     } else {
         // Log an error if the parent does not exist
         console.error('The parent element does not exist.');
-    }
-    
+    }    
 }
 
-
+// Sets the entire centered_block to an empty string
 function clearCenteredBlock(component) {
     if (component) {
         component.innerHTML = ''
@@ -65,7 +62,6 @@ function clearDynamicHeadElements() {
             document.head.removeChild(element);
         }
     });
-
 }
 
 
@@ -90,40 +86,30 @@ function titleAndMeta(headBlock, titleContent, metaContent) {
 
     }, headBlock);
 
+    return headBlock
+
 }
 
 
-function startOffAPage(headBlock, centeredBlock, titleContent, metaContent) {
+function startOffAPage(centeredBlock, titleContent, metaContent) {
 
+    
+    
+    // Works
     clearCenteredBlock(centeredBlock);
     
+    // Works
     // Clear head except for data-static = 'true'
     clearDynamicHeadElements();
 
+    let headBlock = document.getElementById('index_head');
+
+    // Works
     // Adds title and meta to head
     titleAndMeta(headBlock, titleContent, metaContent);
 
-    // Adds favicons, additional scripts, etc. to head
-    appendHtmlToParent(headBlock, headBlock);
-
 }
 
-
-
-function trustLogoElement() {
-    const trust_logo = `
-        <div id="trust-logo-container">
-            <script data-static="true" type="text/javascript"> //<![CDATA[
-                var tlJsHost = ((window.location.protocol == "https:") ? "https://secure.trust-provider.com/" : "http://www.trustlogo.com/");
-                document.write(unescape("%3Cscript src='" + tlJsHost + "trustlogo/javascript/trustlogo.js' type='text/javascript'%3E%3C/script%3E"));
-            //]]></script>
-            <script language="JavaScript" type="text/javascript">
-                TrustLogo("https://www.positivessl.com/images/seals/positivessl_trust_seal_md_167x42.png", "POSDV", "none");
-            </script>
-        </div>
-    `
-    return trust_logo
-}
 
 
 

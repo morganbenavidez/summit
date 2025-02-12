@@ -50,18 +50,3 @@ h1 {
 #text-container a:hover {
     text-decoration: underline;
 }
-
-#trust-logo-container {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    width: 100px;
-    height: auto;
-    z-index: 1000;
-    overflow: hidden;
-}
-
-#trust-logo-container img {
-    width: 100%;
-    height: auto;
-}
