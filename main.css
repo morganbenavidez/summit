@@ -1,15 +1,4 @@
 
-#centered_block {
-    font-family: Arial, sans-serif;
-    height: 100vh;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    background: radial-gradient(circle, #65F9FC 10%, #010518 70%);
-}
 
 #summit_image {
     display: block;
