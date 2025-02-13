@@ -1,6 +1,6 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify
 from flask import redirect, url_for
-from summit import summit
+from summit import *
 
 
 app = Flask(__name__)
