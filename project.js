@@ -69,10 +69,15 @@ function loadPage(page) {
             loadDocumentationPage(titleContent, metaContent);
             break;
         // ADD MORE CASES FOR EACH OF YOUR PAGES AS NEEDED
-        case 'success':
-            titleContent = "Success";
-            metaContent = "Success";
-            loadSuccessPage(titleContent, metaContent);
+        case 'login':
+            titleContent = "Summit Login";
+            metaContent = "Summit Login";
+            loadLoginPage(titleContent, metaContent);
+            break;
+        case 'dashboard':
+            titleContent = "Summit Dashboard";
+            metaContent = "Summit Dashboard";
+            loadDashboardPage(titleContent, metaContent);
             break;
         default:
             titleContent = 'Summit Framework';
@@ -104,6 +109,8 @@ function loadHomePage(titleContent, metaContent) {
     const text_container = div(centeredBlock, {id: "text-container"});
     h1(text_container, {innerHTML: "Welcome to base camp. Let's get you to the Summit!"});
     a(text_container, {href: "javascript:navigate('documentation')", innerHTML: "Documentation"});
+    const text_container2 = div(centeredBlock, {id: "text-container2"});
+    a(text_container2, {href: "javascript:navigate('login')", innerHTML: "Login"});
 
 };
 
@@ -117,11 +124,53 @@ function loadDocumentationPage(titleContent, metaContent) {
     
 };
 
+function loadLoginPage(titleContent, metaContent) {
 
-function loadSuccessPage(titleContent, metaContent) {
     const centeredBlock = document.getElementById('centered_block');
 
     startOffAPage(centeredBlock, titleContent, metaContent);
 
-    h1(centeredBlock, {innerHTML: "Success"});
+    h1(centeredBlock, {innerHTML: "Summit Login"});
+
+    login_box101(centeredBlock);
+    
+};
+
+function loadDashboardPage(titleContent, metaContent) {
+
+    const centeredBlock = document.getElementById('centered_block');
+
+    startOffAPage(centeredBlock, titleContent, metaContent);
+
+    h1(centeredBlock, {innerHTML: "Summit Dashboard"});
+
+    var storedName = localStorage.getItem("fname");
+    p(centeredBlock, {innerHTML: storedName});
+    
+};
+// Add functions to load pages here
+
+
+
+
+function handleAjaxResponse(status, response) {
+    if (status === 'login_success') {
+        if (response.message) {
+            console.log("Login Successful:", response.message);
+            localStorage.setItem("fname", response.name);
+            navigate('dashboard');
+        } else {
+            console.log("Unexpected success response:", response);
+        }
+    } else if (status === 'login_failed') {
+        if (response.error) {
+            console.error("Login Failed:", response.error);
+            // Optionally, you can clear the password field for security
+            document.getElementById('password101').value = "";
+        } else {
+            console.error("Unexpected error response:", response);
+        }
+    } else {
+        console.error("Unknown status:", status);
+    }
 }

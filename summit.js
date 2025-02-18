@@ -479,37 +479,49 @@ function getCookie(name) {
     return undefined;
 }
 
-function ajaxCall() {
 
-    var server_data2 = [
-        {"subProductType": sku}
-    ];
 
+function ajaxCall(endpoint, method, jsonData, callback) {
     $.ajax({
-        type: "POST",
-        url: "/process_subProductType",
-        data: JSON.stringify(server_data2),
-        contentType: "application/json",
-        dataType: 'json',
-        success: function(result){
-            build_sizeList(result);
-        }
-    });
-}
-
-function dynamicAjaxCall(endpoint, jsonData, successCallback) {
-    $.ajax({
-        type: "POST",
+        type: method || "POST",  // Default to POST if not specified
         url: endpoint,
         data: JSON.stringify(jsonData),
         contentType: "application/json",
         dataType: 'json',
-        success: function(result) {
-            return result;
+        success: function(response) {
+            if (typeof callback === "function") {
+                callback(response);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Request Failed:", status, error);
+            if (typeof callback === "function") {
+                callback({ success: false, error: "Request failed: " + error });
+            }
         }
     });
 }
 
+
+function ajaxCallFormData(endpoint, method, formData, successCallback) {
+    $.ajax({
+        type: method || "POST",
+        url: endpoint,
+        data: formData,
+        contentType: false,  // Important for FormData
+        processData: false,  // Prevent jQuery from processing data
+        dataType: 'json',
+        success: function(response) {
+            if (typeof successCallback === "function") {
+                successCallback(response);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error:", status, error);
+            alert("Upload failed: " + xhr.responseText);
+        }
+    });
+}
 
 
 
@@ -1225,14 +1237,14 @@ function login_box101(centeredBlock) {
 
     const login_box = div(centeredBlock, {id: "login_box101"});
     h1(login_box, {innerHTML: "Login"});
-    const login_form = form(login_box, {id: 'login_form101', onsubmit: 'return submitLoginForm();'});
+    const login_form = form(login_box, {id: 'login_form101', onsubmit: 'return submitLoginForm101();'});
     input(login_form, {id: 'email101', name: 'email101', type: 'email', placeholder: 'Email'});
     input(login_form, {id: 'password101', name: 'password101', type: 'password', placeholder: 'Password'});
     input(login_form, {type: 'submit', value: 'Log In'});
-
 }
 
 function submitLoginForm101() {
+    
     // Grab form values.
     var email = document.getElementById('email101').value;
     var password = document.getElementById('password101').value;
@@ -1240,11 +1252,13 @@ function submitLoginForm101() {
     // Call the generic AJAX function to send login data.
     ajaxCall('/login101', 'POST', { email: email, password: password }, function(response) {
         if(response.success) {
-            alert("Login successful!");
+            handleAjaxResponse('login_success', response);
+            //alert("Login successful!");
             // You might call a function here to update the UI or navigate.
             // e.g., navigate('dashboard');
         } else {
-            alert("Login failed: " + response.error);
+            //alert("Login failed: " + response.error);
+            handleAjaxResponse('login_failed', response)
         }
     });
     return false; // Prevent default form submission.
