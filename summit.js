@@ -481,6 +481,8 @@ function getCookie(name) {
 
 
 
+
+
 function ajaxCall(endpoint, method, jsonData, callback) {
     $.ajax({
         type: method || "POST",  // Default to POST if not specified
@@ -1265,3 +1267,172 @@ function submitLoginForm101() {
 }
 
 /* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
+
+function ajax_request(endpoint, method, data, responseType, callback = () => {}) {
+    $.ajax({
+        type: method || "POST",
+        url: endpoint,
+        data: data instanceof FormData ? data : JSON.stringify(data),
+        contentType: data instanceof FormData ? false : "application/json",
+        processData: !(data instanceof FormData),
+        dataType: "json",
+        success: function(response) {
+            callback(response);
+            ajax_handle(responseType, response);
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error:", status, error);
+            callback({ success: false, error: "Request failed: " + error });
+        }
+    });
+}
+
+
+function ajax_handle(responseType, response) {
+    switch (responseType) {
+        case "user_action":
+            console.log("User Action Response:", response.message);
+            break;
+            
+        case "file_upload":
+            console.log("File Upload Success:", response.file_path);
+            alert("File successfully uploaded!");
+            break;
+            
+        case "multi_upload":
+            console.log("Multiple File Upload Success:", response.details);
+            alert("Files have been processed successfully.");
+            break;
+            
+        default:
+            console.error("Unhandled response:", response);
+    }
+}
+
+let selectedFiles = {};  // Store selected files per input field
+
+// Pass in list of element ids
+// 🏗️ Package Data for AJAX
+function package_data_for_ajax(elementIds) {
+    let formData = new FormData();
+    let jsonData = {};
+    let isFormData = false;
+
+    elementIds.forEach(id => {
+        let element = document.getElementById(id);
+        if (!element) {
+            console.warn(`Element with ID '${id}' not found.`);
+            return;
+        }
+
+        switch (element.type) {
+            case "file":
+                if (selectedFiles[id] && selectedFiles[id].length > 0) {
+                    selectedFiles[id].forEach(file => {
+                        formData.append(`${id}[]`, file);  // Append multiple files under the same key
+                    });
+                    jsonData[id] = selectedFiles[id].map(file => file.name);
+                    isFormData = true;
+                }
+                break;
+
+            case "checkbox":
+                jsonData[id] = element.checked;
+                formData.append(id, element.checked);
+                break;
+
+            case "radio":
+                if (element.checked) {
+                    jsonData[id] = element.value;
+                    formData.append(id, element.value);
+                }
+                break;
+
+            default:
+                if (element.tagName === "SELECT" && element.multiple) {
+                    let selectedOptions = Array.from(element.selectedOptions).map(opt => opt.value);
+                    jsonData[id] = selectedOptions;
+                    formData.append(id, JSON.stringify(selectedOptions));
+                } else {
+                    jsonData[id] = element.value.trim();
+                    formData.append(id, element.value.trim());
+                }
+        }
+    });
+
+    // 🏷️ Dynamically Determine Response Type
+    let responseType;
+    if (isFormData && Object.keys(jsonData).length > 0) {
+        responseType = "multi_upload";  // Files + JSON
+    } else if (isFormData) {
+        responseType = "file_upload";   // Only files
+    } else {
+        responseType = "user_action";   // JSON only
+
+    }
+
+    return { data: isFormData ? formData : JSON.stringify(jsonData), responseType };
+}
+
+
+
+
+// Usage Example
+function submitForm() {
+    let formElements = ["username", "email", "fileInput"];
+    let { data, responseType } = package_data_for_ajax(formElements);
+    let method = "POST";
+    let endpoint = "/ajax_receive";
+
+    ajax_request(endpoint, method, data, responseType);
+}
+
+
+function createFileInput(parent, id, acceptedTypes=[], singleOrMultiple='single') {
+    if (singleOrMultiple === 'single') {
+        input(parent, {
+            id: id,
+            type: "file",
+            accept: acceptedTypes.join(","),
+            onchange: `handleFileSelect('${id}')`
+        });
+    } else if (singleOrMultiple === 'multiple') {
+        input(parent, {
+            id: id,
+            type: "file",
+            accept: acceptedTypes.join(","), 
+            multiple: true,
+            onchange: `handleFileSelect('${id}')`
+        });
+    }
+    
+}
+
+
+function handleFileSelect(inputId) {
+    const inputElement = document.getElementById(inputId);
+    if (!inputElement || !inputElement.files.length) return;
+
+    if (!selectedFiles[inputId]) {
+        selectedFiles[inputId] = [];  // Initialize array for this input field
+    }
+
+    let newFiles = [];
+
+    // Append new files while avoiding duplicates
+    for (let file of inputElement.files) {
+        let exists = selectedFiles[inputId].some(f => f.name === file.name && f.size === file.size);
+        if (!exists) {
+            selectedFiles[inputId].push(file);
+            newFiles.push(file.name);
+        }
+    }
+
+    if (newFiles.length > 0) {
+        console.log(`New files selected for ${inputId}:`, newFiles);
+    } else {
+        console.warn(`No new files added for ${inputId}. They may be duplicates.`);
+    }
+
+    inputElement.value = ""; // Clear input field to allow re-selection of the same file
+}

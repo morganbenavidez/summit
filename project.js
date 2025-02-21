@@ -104,6 +104,42 @@ function loadHomePage(titleContent, metaContent) {
     // set new title and meta content
     startOffAPage(centeredBlock, titleContent, metaContent);
 
+    
+    // Single File
+    h1(centeredBlock, { innerHTML: "Test: Single File Upload" });
+    createFileInput(centeredBlock, "singleFile", [".png", ".jpeg"], 'single');
+    button(centeredBlock, { innerHTML: "Upload", onclick: "testSingleFileUpload()" });
+    
+    
+    // Multi Family
+    h1(centeredBlock, { innerHTML: "Test: Multiple File Upload" });
+    createFileInput(centeredBlock, "multiFiles", [".png", ".jpeg", ".pdf"], 'multiple');
+    button(centeredBlock, { innerHTML: "Upload", onclick: "testMultiFileUpload()" });
+
+    
+    // JSON Only
+    h1(centeredBlock, { innerHTML: "Test: JSON Data Only" });
+    input(centeredBlock, { id: "username", type: "text", placeholder: "Enter Username" });
+    input(centeredBlock, { id: "email", type: "email", placeholder: "Enter Email" });
+    button(centeredBlock, { innerHTML: "Submit JSON", onclick: "testJsonOnly()" });
+
+    /*
+    // Single File + JSON
+    h1(centeredBlock, { innerHTML: "Test: Single File + JSON" });
+    input(centeredBlock, { id: "username", type: "text", placeholder: "Enter Username" });
+    input(centeredBlock, { id: "email", type: "email", placeholder: "Enter Email" });
+    createFileInput(centeredBlock, "singleFileWithJson", ["image/png", "image/jpeg"], false);
+    button(centeredBlock, { innerHTML: "Upload & Submit JSON", onclick: "testSingleFileWithJson()" });
+
+    // Multi File + JSON
+    h1(centeredBlock, { innerHTML: "Test: Multiple Files + JSON" });
+    input(centeredBlock, { id: "username", type: "text", placeholder: "Enter Username" });
+    input(centeredBlock, { id: "email", type: "email", placeholder: "Enter Email" });
+    createFileInput(centeredBlock, "multiFilesWithJson", ["image/png", "image/jpeg", "application/pdf"], true);
+    button(centeredBlock, { innerHTML: "Upload & Submit JSON", onclick: "testMultiFileWithJson()" });
+    */
+
+    /*
     img(document.getElementById('centered_block'), { id: "summit_image", src: "/static/images/summit.png" });
 
     const text_container = div(centeredBlock, {id: "text-container"});
@@ -111,8 +147,41 @@ function loadHomePage(titleContent, metaContent) {
     a(text_container, {href: "javascript:navigate('documentation')", innerHTML: "Documentation"});
     const text_container2 = div(centeredBlock, {id: "text-container2"});
     a(text_container2, {href: "javascript:navigate('login')", innerHTML: "Login"});
+    */
+
 
 };
+
+function testSingleFileUpload() {
+    let formElements = ["singleFile"];
+    let { data, responseType } = package_data_for_ajax(formElements);
+    ajax_request("/ajax_receive", "POST", data, responseType);
+}
+
+function testMultiFileUpload() {
+    let formElements = ["multiFiles"];
+    let { data, responseType } = package_data_for_ajax(formElements);
+    ajax_request("/ajax_receive", "POST", data, responseType);
+}
+
+function testJsonOnly() {
+    let formElements = ["username", "email"];
+    let { data, responseType } = package_data_for_ajax(formElements);
+    ajax_request("/ajax_receive", "POST", data, responseType);
+}
+
+function testSingleFileWithJson() {
+    let formElements = ["username", "email", "singleFileWithJson"];
+    let { data, responseType } = package_data_for_ajax(formElements);
+    ajax_request("/ajax_receive", "POST", data, responseType);
+}
+
+function testMultiFileWithJson() {
+    let formElements = ["username", "email", "multiFilesWithJson"];
+    let { data, responseType } = package_data_for_ajax(formElements);
+    ajax_request("/ajax_receive", "POST", data, responseType);
+}
+
 
 function loadDocumentationPage(titleContent, metaContent) {
 
