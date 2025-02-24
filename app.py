@@ -2,7 +2,6 @@ from flask import Flask, render_template, send_from_directory, request, jsonify
 from flask import redirect, url_for
 from dotenv import load_dotenv
 from summit import *
-# ✅ Validate email format
 import re
 import os
 
