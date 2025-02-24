@@ -1,5 +1,46 @@
 
 
+
+
+
+
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+
+function createToolButtons(container) {
+    var tools = [
+        { name: "Create Container", action: "containerize" },
+        { name: "Upload Network Blueprint", action: 'network_blueprint'},
+        { name: "Deploy Bash Scripts Across Multiple Machines", action: 'deploy_bash_scripts'},
+        { name: "Add Used Port", action: "add_port" },
+        { name: "Reports", action: "reports" },
+        { name: "User Management", action: "user_management" },
+        { name: "Settings", action: "settings" },
+        { name: "Support", action: "support" }
+    ];
+
+    tools.forEach(function(tool) {
+        var button = document.createElement("a");
+        button.innerHTML = tool.name;
+        button.href = `javascript:navigate('${tool.action}')`;
+        button.classList.add("tool-button"); // Optional for styling
+        container.appendChild(button);
+    });
+}
+
+
+
+
 // $$$$$ GLOBAL VARIABLES
 
 // Create an object to store selected files globally
@@ -90,6 +131,28 @@ function ajax_handle(responseType, response) {
                 if (passwordInput) passwordInput.value = "";
                 console.error("Login Failed:", response.error);
                 break;
+            
+            case 'unique_clusters':
+                let selectElement = document.getElementById("cluster_select");
+                let options = response.clusters;
+                selectElement.innerHTML = "";  // Clear existing options
+                let defaultOption = document.createElement("option");
+                defaultOption.textContent = "Select Cluster";
+                defaultOption.disabled = true;
+                defaultOption.selected = true;
+                selectElement.appendChild(defaultOption);
+
+                options.forEach(option => {
+                    let opt = document.createElement("option");
+                    opt.value = option;
+                    opt.textContent = option;
+                    selectElement.appendChild(opt);
+                });
+                break;
+            
+            case 'deploy_bash':
+                console.log('Bash script deployed...');
+                break;
 
             // ADD MORE CASES TO HANDLE HERE
 
@@ -175,16 +238,23 @@ function ajax_package(formElements, mode, job) {
         formData.append("job", job);
 
         formElements.forEach(id => {
+            console.log('id: ', id);
             let input = document.getElementById(id);
             if (!input) return;
 
             if (input.type === "file" && input.files.length > 0) {
                 formData.append(id, input.files[0]);
+            } else if (input.tagName === "SELECT") {
+                console.log('select');
+                console.log(input.value);
+                formData.append(id, input.value);
             } else {
                 formData.append(id, input.value.trim());
             }
         });
 
+        console.log("FORM DATA");
+        console.log(formData);
         // Add Validation
         ajax_validate(formData, job, mode);
 
@@ -201,8 +271,10 @@ function ajax_package(formElements, mode, job) {
             let input = document.getElementById(id);
             if (!input) return;
 
-            if (input.type !== "file") {
+            if (input.type !== "file" && input.tagName !== "SELECT") {
                 formData.append(id, input.value.trim());
+            } else if (input.type !== "file" && input.tagName === "SELECT") {
+                formData.append(id, input.value);
             }
         });
 
@@ -222,6 +294,7 @@ function ajax_package(formElements, mode, job) {
 
 // All ajax requests are made through this function
 function ajax_request(endpoint, method, data, responseType, callback = () => {}) {
+
     $.ajax({
         type: method || "POST",
         url: endpoint,
@@ -914,7 +987,6 @@ function createRadioButtonsWithOptions(attributes, options, parentElement) {
 
 function createFileInput(parent, id, allowedTypes, mode, job, formElements=false) {
 
-    // ✅ Initialize `fileSelections[id]`
     fileSelections[id] = [];
 
     if (mode === 'single_file') {
@@ -925,7 +997,7 @@ function createFileInput(parent, id, allowedTypes, mode, job, formElements=false
             accept: allowedTypes
         });
 
-        // ✅ File List Display
+
         var fileListContainer = div(parent, { id: "fileList" });
 
         //let fileLabel = label(parent, {id: `${id}_label`, innerHTML: 'No file chosen'});
@@ -957,7 +1029,7 @@ function createFileInput(parent, id, allowedTypes, mode, job, formElements=false
             accept: allowedTypes
         });
 
-        // ✅ File List Display
+        // File List Display
         var fileListContainer = div(parent, { id: "fileList" });
 
         folderInput.addEventListener("change", (event) => {
@@ -982,7 +1054,7 @@ function createFileInput(parent, id, allowedTypes, mode, job, formElements=false
             accept: allowedTypes
         });
         console.log('here');
-        // ✅ File List Display
+        // File List Display
         var fileListContainer = div(parent, { id: "fileList" });
 
         //let fileLabel = label(parent, {id: `${id}_label`, innerHTML: 'No file chosen'});
@@ -995,9 +1067,10 @@ function createFileInput(parent, id, allowedTypes, mode, job, formElements=false
 
         this_list_of_elements = [id];
 
-        // ✅ Iterate over formElements and add them to the list
+        // Iterate over formElements and add them to the list
         if (formElements) {
             formElements.forEach(el => {
+                console.log('el: ', el);
                 this_list_of_elements.push(el);
             });
         }
@@ -1008,6 +1081,8 @@ function createFileInput(parent, id, allowedTypes, mode, job, formElements=false
                 return;
             }
             let { data, responseType } = ajax_package(this_list_of_elements, 'single_file_and_json', job);
+            console.log("DATA");
+            console.log(data);
             ajax_request("/ajax_receive", "POST", data, responseType);
         });
     } else if (mode === 'folder_and_json') {
@@ -1019,7 +1094,7 @@ function createFileInput(parent, id, allowedTypes, mode, job, formElements=false
             accept: allowedTypes
         });
 
-        // ✅ File List Display
+        // File List Display
         var fileListContainer = div(parent, { id: "fileList" });
 
         folderInput.addEventListener("change", (event) => {
@@ -1030,7 +1105,7 @@ function createFileInput(parent, id, allowedTypes, mode, job, formElements=false
 
         this_list_of_elements = [id];
 
-        // ✅ Iterate over formElements and add them to the list
+        // Iterate over formElements and add them to the list
         if (formElements) {
             formElements.forEach(el => {
                 this_list_of_elements.push(el);
@@ -1053,12 +1128,12 @@ function createFileInput(parent, id, allowedTypes, mode, job, formElements=false
 function handleFileSelection(event, inputId, fileListContainer, allowedTypes, mode) {
 
     if (mode === 'single_file') {
-        let thisInput = document.getElementById(inputId); // ✅ Ensure correct reference
+        let thisInput = document.getElementById(inputId);
         if (thisInput.files.length !== 1) {
             alert("Only one file can be uploaded at a time.");
-            thisInput.value = ""; // ✅ Reset file input
-            fileListContainer.innerHTML = "<li>No file chosen</li>"; // ✅ Update display
-            fileSelections[inputId] = []; // ✅ Clear selection
+            thisInput.value = ""; 
+            fileListContainer.innerHTML = "<li>No file chosen</li>";
+            fileSelections[inputId] = [];
             return;
         }
 
@@ -1067,19 +1142,18 @@ function handleFileSelection(event, inputId, fileListContainer, allowedTypes, mo
 
         if (!allowedTypes.includes(fileType)) {
             alert("Invalid file type.");
-            thisInput.value = ""; // ✅ Reset file input
-            fileListContainer.innerHTML = "<li>No file chosen</li>"; // ✅ Update display
-            fileSelections[inputId] = []; // ✅ Clear selection
+            thisInput.value = "";
+            fileListContainer.innerHTML = "<li>No file chosen</li>";
+            fileSelections[inputId] = [];
             return;
         }
 
-        fileSelections[inputId] = [file]; // ✅ Store selected file
-        fileListContainer.innerHTML = `<li>${file.name}</li>`; // ✅ Display file name
+        fileSelections[inputId] = [file];
+        fileListContainer.innerHTML = `<li>${file.name}</li>`;
 
     } else if (mode === 'folder_submission'){
 
-        let files = Array.from(event.target.files); // Convert FileList to an array
-
+        let files = Array.from(event.target.files);
         if (files.length === 0) {
             fileListContainer.innerHTML = "<li>No files selected.</li>";
             return;
@@ -1088,7 +1162,6 @@ function handleFileSelection(event, inputId, fileListContainer, allowedTypes, mo
         let invalidFiles = [];
         let validFiles = [];
 
-        // ✅ Check all files before allowing selection
         files.forEach(file => {
             let fileType = `.${file.name.split('.').pop().toLowerCase()}`;
 
@@ -1101,19 +1174,19 @@ function handleFileSelection(event, inputId, fileListContainer, allowedTypes, mo
 
         if (invalidFiles.length > 0) {
             alert(`Invalid file(s) detected:\n${invalidFiles.join("\n")}\n\nPlease select only allowed file types.`);
-            event.target.value = ""; // ✅ Reset file input
-            fileListContainer.innerHTML = "<li>No files selected.</li>"; // ✅ Clear displayed list
-            fileSelections[inputId] = []; // ✅ Clear selection
+            event.target.value = "";
+            fileListContainer.innerHTML = "<li>No files selected.</li>";
+            fileSelections[inputId] = [];
             return;
         }
 
-        // ✅ All files are valid → proceed with selection
+        
         fileSelections[inputId] = validFiles;
-        fileListContainer.innerHTML = ""; // Clear UI list
+        fileListContainer.innerHTML = "";
 
         validFiles.forEach(file => {
             let listItem = document.createElement("li");
-            listItem.textContent = file.webkitRelativePath || file.name; // Show full folder structure
+            listItem.textContent = file.webkitRelativePath || file.name;
             fileListContainer.appendChild(listItem);
         });
     } 
