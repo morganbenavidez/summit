@@ -131,28 +131,6 @@ function ajax_handle(responseType, response) {
                 if (passwordInput) passwordInput.value = "";
                 console.error("Login Failed:", response.error);
                 break;
-            
-            case 'unique_clusters':
-                let selectElement = document.getElementById("cluster_select");
-                let options = response.clusters;
-                selectElement.innerHTML = "";  // Clear existing options
-                let defaultOption = document.createElement("option");
-                defaultOption.textContent = "Select Cluster";
-                defaultOption.disabled = true;
-                defaultOption.selected = true;
-                selectElement.appendChild(defaultOption);
-
-                options.forEach(option => {
-                    let opt = document.createElement("option");
-                    opt.value = option;
-                    opt.textContent = option;
-                    selectElement.appendChild(opt);
-                });
-                break;
-            
-            case 'deploy_bash':
-                console.log('Bash script deployed...');
-                break;
 
             // ADD MORE CASES TO HANDLE HERE
 
