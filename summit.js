@@ -1,5 +1,248 @@
 
 
+// $$$$$ GLOBAL VARIABLES
+
+// Create an object to store selected files globally
+const fileSelections = {};
+// Validate email format using regex
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+
+// $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+function ajax_validate(data, job, mode) {
+
+    if (mode === 'single_file') {
+
+    } else if (mode === 'folder_submission') {
+
+    } else if (mode === 'json_only') {
+        if (job === 'json_1') {
+            let email = data["email"];
+    
+            if (!emailPattern.test(email)) {
+                alert("Invalid email format. Please enter a valid email.");
+                return;
+            }
+        }
+    } else if (mode === 'single_file_and_json') {
+        // Add Validation
+        if (job === 'sfj') {
+            let email = data.get("email");
+
+            if (!emailPattern.test(email)) {
+                alert("Invalid email format. Please enter a valid email.");
+                return;
+            }
+        }
+    } else if (mode === 'folder_and_json') {
+        // Add Validation
+        if (job === 'fwj') {
+            let email = data.get("email");
+
+            if (!emailPattern.test(email)) {
+                alert("Invalid email format. Please enter a valid email.");
+                return;
+            }
+        }
+    }
+    
+}
+
+
+// Handle responses from ajax calls here
+function ajax_handle(responseType, response) {
+    if (responseType === "json") {
+        // Check if response is an array and extract the first object
+        if (Array.isArray(response)) {
+            response = response[0];
+        }
+
+        if (!response.job) {
+            console.warn("No job specified in response:", response);
+            return;
+        }
+
+        switch (response.job) {
+            case 'login101':
+                if (response.success) {
+                    console.log("Login Successful:", response.message);
+                    localStorage.setItem("fname", response.name);
+                    navigate('dashboard');
+                } else if (response.error) {
+                    alert("Error: " + response.error);
+                }
+                break;
+
+            case 'login_failed':
+                let passwordInput = document.getElementById('password101');
+                if (passwordInput) passwordInput.value = "";
+                console.error("Login Failed:", response.error);
+                break;
+
+            // ADD MORE CASES TO HANDLE HERE
+
+            default:
+                console.warn("Unhandled job type:", response.job);
+                break;
+        }
+    } else {
+        console.log("Unexpected response type:", response);
+    }
+}
+
+
+
+
+// $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+
+
+// Package your ajax calls with this
+function ajax_package(formElements, mode, job) {
+    console.log('job: ', job);
+    if (mode === 'single_file') {
+        let formData = new FormData();
+        formData.append("backend_flag", 'single_file');
+        formData.append("job", job);
+        formElements.forEach(id => {
+            let input = document.getElementById(id);
+            if (input && input.files.length > 0) {
+                formData.append(id, input.files[0]);
+            }
+        });
+        
+        // Add Validation
+        ajax_validate(formData, job, mode);
+
+        return { data: formData, responseType: "json" };
+    } else if (mode === 'folder_submission') {
+        var inputId = formElements[0];
+        let formData = new FormData();
+        formData.append("backend_flag", 'multiple_files');
+        formData.append("job", job);
+       
+        fileSelections[inputId].forEach(file => {
+            formData.append("multiFiles", file, file.webkitRelativePath);
+        });
+
+        // Add Validation
+        ajax_validate(formData, job, mode);
+
+        return { data: formData, responseType: "json" };
+    } else if (mode === 'json_only') {
+        
+        let jsonData = {
+            backend_flag: "json_only",
+            job: job
+        };
+
+        formElements.forEach(id => {
+            let the_input = document.getElementById(id);
+            if (the_input) {
+                jsonData[id] = the_input.value.trim();
+            }
+        });
+
+        // Add Validation
+        ajax_validate(jsonData, job, mode);
+        
+        return { data: jsonData, responseType: "json" };
+        
+    } else if (mode === 'single_file_and_json') {
+
+        let formData = new FormData();
+        formData.append("backend_flag", 'single_file_and_json');
+        formData.append("job", job);
+
+        formElements.forEach(id => {
+            let input = document.getElementById(id);
+            if (!input) return;
+
+            if (input.type === "file" && input.files.length > 0) {
+                formData.append(id, input.files[0]);
+            } else {
+                formData.append(id, input.value.trim());
+            }
+        });
+
+        // Add Validation
+        ajax_validate(formData, job, mode);
+
+        return { data: formData, responseType: "json" };
+
+    } else if (mode === 'folder_and_json') {
+        var inputId = formElements[0];
+        let formData = new FormData();
+        formData.append("backend_flag", 'folder_and_json');
+        formData.append("job", job);
+
+        
+        formElements.forEach(id => {
+            let input = document.getElementById(id);
+            if (!input) return;
+
+            if (input.type !== "file") {
+                formData.append(id, input.value.trim());
+            }
+        });
+
+        
+        fileSelections[inputId].forEach(file => {
+            formData.append("multiFiles", file, file.webkitRelativePath);
+        });
+
+        // Add Validation
+        ajax_validate(formData, job, mode);
+
+        return { data: formData, responseType: "json" };
+    }
+}
+
+
+
+// All ajax requests are made through this function
+function ajax_request(endpoint, method, data, responseType, callback = () => {}) {
+    $.ajax({
+        type: method || "POST",
+        url: endpoint,
+        data: data instanceof FormData ? data : JSON.stringify(data),
+        contentType: data instanceof FormData ? false : "application/json",
+        processData: !(data instanceof FormData),
+        dataType: "json",
+        success: function(response) {
+            console.log('responseType: ', responseType);
+            console.log('response: ', response);
+            callback(response);
+            ajax_handle(responseType, response);
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error:", status, error);
+            callback({ success: false, error: "Request failed: " + error });
+        }
+    });
+}
+
+
 
 // Creates any element of your choice
 
@@ -30,7 +273,6 @@ function createAndAppendElement(type, attributes, parentElement) {
     return element;
 
 }
-
 
 
 
@@ -65,8 +307,6 @@ function clearDynamicHeadElements() {
 }
 
 
-
-
 function titleAndMeta(headBlock, titleContent, metaContent) {
 
     // Head data
@@ -90,21 +330,15 @@ function titleAndMeta(headBlock, titleContent, metaContent) {
 
 }
 
-
 function startOffAPage(centeredBlock, titleContent, metaContent) {
 
-    
-    
-    // Works
     clearCenteredBlock(centeredBlock);
     
-    // Works
     // Clear head except for data-static = 'true'
     clearDynamicHeadElements();
 
     let headBlock = document.getElementById('index_head');
 
-    // Works
     // Adds title and meta to head
     titleAndMeta(headBlock, titleContent, metaContent);
 
@@ -112,12 +346,7 @@ function startOffAPage(centeredBlock, titleContent, metaContent) {
 
 
 
-
-
-
-
 // $$$$$$$$$$$$$$$$$$$$  SIMPLE ELEMENTS         $$$$$$$$$$$$$$$$$$$$$$$$$
-
 
 
 
@@ -466,7 +695,7 @@ function legend(parent, attributes = {}) {
 
 
 
-// $$$$$$$$$$$$$$$$$$$$  COOKIES, AJAX, AND SESSIONS         $$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$$$$$$$$$$$$$$$$  COOKIES        $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 function getCookie(name) {
     let cookieArray = document.cookie.split(';');
@@ -480,61 +709,7 @@ function getCookie(name) {
 }
 
 
-
-
-
-function ajaxCall(endpoint, method, jsonData, callback) {
-    $.ajax({
-        type: method || "POST",  // Default to POST if not specified
-        url: endpoint,
-        data: JSON.stringify(jsonData),
-        contentType: "application/json",
-        dataType: 'json',
-        success: function(response) {
-            if (typeof callback === "function") {
-                callback(response);
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("AJAX Request Failed:", status, error);
-            if (typeof callback === "function") {
-                callback({ success: false, error: "Request failed: " + error });
-            }
-        }
-    });
-}
-
-
-function ajaxCallFormData(endpoint, method, formData, successCallback) {
-    $.ajax({
-        type: method || "POST",
-        url: endpoint,
-        data: formData,
-        contentType: false,  // Important for FormData
-        processData: false,  // Prevent jQuery from processing data
-        dataType: 'json',
-        success: function(response) {
-            if (typeof successCallback === "function") {
-                successCallback(response);
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("AJAX Error:", status, error);
-            alert("Upload failed: " + xhr.responseText);
-        }
-    });
-}
-
-
-
-
-
-
-
 // $$$$$$$$$$$$$$$$$$$$  SUPPORT FUNCTIONS         $$$$$$$$$$$$$$$$$$$$$$$$$
-
-
-
 
 
 
@@ -658,7 +833,6 @@ function createSelectWithOptions(parentElement, attributes, options, firstOption
 }
 
 
-
 // Function to create and append checkboxes with labels
 
 function createCheckboxesWithOptions(attributes, options, parentElement) {
@@ -738,7 +912,213 @@ function createRadioButtonsWithOptions(attributes, options, parentElement) {
 }
 
 
+function createFileInput(parent, id, allowedTypes, mode, job, formElements=false) {
 
+    // ✅ Initialize `fileSelections[id]`
+    fileSelections[id] = [];
+
+    if (mode === 'single_file') {
+
+        var fileInput = input(parent, {
+            type: "file",
+            id: id,
+            accept: allowedTypes
+        });
+
+        // ✅ File List Display
+        var fileListContainer = div(parent, { id: "fileList" });
+
+        //let fileLabel = label(parent, {id: `${id}_label`, innerHTML: 'No file chosen'});
+
+        fileInput.addEventListener("change", (event) => {
+            handleFileSelection(event, id, fileListContainer, allowedTypes, mode);
+        });
+
+        var submitBtn = button(parent, { innerHTML: "Submit", id: 'fileSubmitButton'});
+
+        submitBtn.addEventListener("click", function() {
+            if (fileSelections[id].length === 0) {
+                alert("No files selected.");
+                return;
+            }
+            let { data, responseType } = ajax_package([id], 'single_file', job);
+            ajax_request("/ajax_receive", "POST", data, responseType);
+        });
+
+
+
+    } else if (mode === 'folder_submission') {
+
+        var folderInput = input(parent, {
+            type: "file",
+            id: id,
+            multiple: true,
+            webkitdirectory: "true",
+            accept: allowedTypes
+        });
+
+        // ✅ File List Display
+        var fileListContainer = div(parent, { id: "fileList" });
+
+        folderInput.addEventListener("change", (event) => {
+            handleFileSelection(event, id, fileListContainer, allowedTypes, mode);
+        });
+
+        var submitBtn = button(parent, { innerHTML: "Submit", id: 'folderSubmitButton' });
+
+        submitBtn.addEventListener("click", function() {
+            if (fileSelections[id].length === 0) {
+                alert("No files selected.");
+                return;
+            }
+            let { data, responseType } = ajax_package([id], 'folder_submission', job);
+            ajax_request("/ajax_receive", "POST", data, responseType);
+        });
+
+    } else if (mode === 'single_file_and_json') {
+        var fileInput = input(parent, {
+            type: "file",
+            id: id,
+            accept: allowedTypes
+        });
+        console.log('here');
+        // ✅ File List Display
+        var fileListContainer = div(parent, { id: "fileList" });
+
+        //let fileLabel = label(parent, {id: `${id}_label`, innerHTML: 'No file chosen'});
+
+        fileInput.addEventListener("change", (event) => {
+            handleFileSelection(event, id, fileListContainer, allowedTypes, 'single_file');
+        });
+
+        var submitBtn = button(parent, { innerHTML: "Submit", id: 'fileSubmitButton'});
+
+        this_list_of_elements = [id];
+
+        // ✅ Iterate over formElements and add them to the list
+        if (formElements) {
+            formElements.forEach(el => {
+                this_list_of_elements.push(el);
+            });
+        }
+
+        submitBtn.addEventListener("click", function() {
+            if (fileSelections[id].length === 0) {
+                alert("No files selected.");
+                return;
+            }
+            let { data, responseType } = ajax_package(this_list_of_elements, 'single_file_and_json', job);
+            ajax_request("/ajax_receive", "POST", data, responseType);
+        });
+    } else if (mode === 'folder_and_json') {
+        var folderInput = input(parent, {
+            type: "file",
+            id: id,
+            multiple: true,
+            webkitdirectory: "true",
+            accept: allowedTypes
+        });
+
+        // ✅ File List Display
+        var fileListContainer = div(parent, { id: "fileList" });
+
+        folderInput.addEventListener("change", (event) => {
+            handleFileSelection(event, id, fileListContainer, allowedTypes, 'folder_submission');
+        });
+
+        var submitBtn = button(parent, { innerHTML: "Submit", id: 'folderSubmitButton' });
+
+        this_list_of_elements = [id];
+
+        // ✅ Iterate over formElements and add them to the list
+        if (formElements) {
+            formElements.forEach(el => {
+                this_list_of_elements.push(el);
+            });
+        }
+
+        submitBtn.addEventListener("click", function() {
+            if (fileSelections[id].length === 0) {
+                alert("No files selected.");
+                return;
+            }
+            let { data, responseType } = ajax_package(this_list_of_elements, 'folder_and_json', job);
+            ajax_request("/ajax_receive", "POST", data, responseType);
+        });
+    }
+    
+}
+
+
+function handleFileSelection(event, inputId, fileListContainer, allowedTypes, mode) {
+
+    if (mode === 'single_file') {
+        let thisInput = document.getElementById(inputId); // ✅ Ensure correct reference
+        if (thisInput.files.length !== 1) {
+            alert("Only one file can be uploaded at a time.");
+            thisInput.value = ""; // ✅ Reset file input
+            fileListContainer.innerHTML = "<li>No file chosen</li>"; // ✅ Update display
+            fileSelections[inputId] = []; // ✅ Clear selection
+            return;
+        }
+
+        let file = thisInput.files[0];
+        let fileType = `.${file.name.split(".").pop().toLowerCase()}`;
+
+        if (!allowedTypes.includes(fileType)) {
+            alert("Invalid file type.");
+            thisInput.value = ""; // ✅ Reset file input
+            fileListContainer.innerHTML = "<li>No file chosen</li>"; // ✅ Update display
+            fileSelections[inputId] = []; // ✅ Clear selection
+            return;
+        }
+
+        fileSelections[inputId] = [file]; // ✅ Store selected file
+        fileListContainer.innerHTML = `<li>${file.name}</li>`; // ✅ Display file name
+
+    } else if (mode === 'folder_submission'){
+
+        let files = Array.from(event.target.files); // Convert FileList to an array
+
+        if (files.length === 0) {
+            fileListContainer.innerHTML = "<li>No files selected.</li>";
+            return;
+        }
+
+        let invalidFiles = [];
+        let validFiles = [];
+
+        // ✅ Check all files before allowing selection
+        files.forEach(file => {
+            let fileType = `.${file.name.split('.').pop().toLowerCase()}`;
+
+            if (!allowedTypes.includes(fileType)) {
+                invalidFiles.push(file.name);
+            } else {
+                validFiles.push(file);
+            }
+        });
+
+        if (invalidFiles.length > 0) {
+            alert(`Invalid file(s) detected:\n${invalidFiles.join("\n")}\n\nPlease select only allowed file types.`);
+            event.target.value = ""; // ✅ Reset file input
+            fileListContainer.innerHTML = "<li>No files selected.</li>"; // ✅ Clear displayed list
+            fileSelections[inputId] = []; // ✅ Clear selection
+            return;
+        }
+
+        // ✅ All files are valid → proceed with selection
+        fileSelections[inputId] = validFiles;
+        fileListContainer.innerHTML = ""; // Clear UI list
+
+        validFiles.forEach(file => {
+            let listItem = document.createElement("li");
+            listItem.textContent = file.webkitRelativePath || file.name; // Show full folder structure
+            fileListContainer.appendChild(listItem);
+        });
+    } 
+    
+}
 
 
 // $$$$$$$$$$$$$$$$$$  IMAGE CAROUSELS AND CONTAINERS   $$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -982,242 +1362,6 @@ function singleImageContainer(sourceDivId, sourceClass, source, centeredBlock) {
 
 
 
-function getCountriesForSelectMenu() {
-    const countryDictionary = {
-        "AF": "Afghanistan",
-        "AX": "Åland Islands",
-        "AL": "Albania",
-        "DZ": "Algeria",
-        "AD": "Andorra",
-        "AO": "Angola",
-        "AI": "Anguilla",
-        "AG": "Antigua and Barbuda",
-        "AR": "Argentina",
-        "AM": "Armenia",
-        "AW": "Aruba",
-        "AU": "Australia",
-        "AT": "Austria",
-        "AZ": "Azerbaijan",
-        "BS": "Bahamas (the)",
-        "BH": "Bahrain",
-        "BD": "Bangladesh",
-        "BB": "Barbados",
-        "BY": "Belarus",
-        "BE": "Belgium",
-        "BZ": "Belize",
-        "BJ": "Benin",
-        "BM": "Bermuda",
-        "BT": "Bhutan",
-        "BO": "Bolivia",
-        "BA": "Bosnia and Herzegovina",
-        "BW": "Botswana",
-        "BV": "Bouvet Island",
-        "BR": "Brazil",
-        "IO": "British Indian Ocean Territory",
-        "VG": "British Virgin Islands",
-        "BN": "Brunei Darussalam",
-        "BG": "Bulgaria",
-        "BF": "Burkina Faso",
-        "BI": "Burundi",
-        "KH": "Cambodia",
-        "CM": "Cameroon",
-        "CA": "Canada",
-        "CV": "Cape Verde",
-        "KY": "Cayman Islands",
-        "CF": "Central African Republic",
-        "TD": "Chad",
-        "CL": "Chile",
-        "CN": "China",
-        "CO": "Colombia",
-        "KM": "Comoros",
-        "CG": "Congo - Brazzaville",
-        "CD": "Congo - Kinshasa",
-        "CK": "Cook Islands",
-        "CR": "Costa Rica",
-        "CI": "Côte d'Ivoire",
-        "HR": "Croatia",
-        "CY": "Cyprus",
-        "CZ": "Czechia",
-        "DK": "Denmark",
-        "DJ": "Djibouti",
-        "DM": "Dominica",
-        "DO": "Dominican Republic",
-        "EC": "Ecuador",
-        "EG": "Egypt",
-        "SV": "El Salvador",
-        "GQ": "Equatorial Guinea",
-        "ER": "Eritrea",
-        "EE": "Estonia",
-        "SZ": "Eswatini",
-        "ET": "Ethiopia",
-        "FK": "Falkland Islands",
-        "FO": "Faroe Islands",
-        "FJ": "Fiji",
-        "FI": "Finland",
-        "FR": "France",
-        "GF": "French Guiana",
-        "PF": "French Polynesia",
-        "TF": "French Southern Territories",
-        "GA": "Gabon",
-        "GM": "Gambia",
-        "GE": "Georgia",
-        "DE": "Germany",
-        "GH": "Ghana",
-        "GI": "Gibraltar",
-        "GR": "Greece",
-        "GL": "Greenland",
-        "GD": "Grenada",
-        "GP": "Guadeloupe",
-        "GU": "Guam",
-        "GT": "Guatemala",
-        "GG": "Guernsey",
-        "GN": "Guinea",
-        "GW": "Guinea-Bissau",
-        "GY": "Guyana",
-        "HT": "Haiti",
-        "HN": "Honduras",
-        "HK": "Hong Kong SAR China",
-        "HU": "Hungary",
-        "IS": "Iceland",
-        "IN": "India",
-        "ID": "Indonesia",
-        "IQ": "Iraq",
-        "IE": "Ireland",
-        "IM": "Isle of Man",
-        "IL": "Israel",
-        "IT": "Italy",
-        "JM": "Jamaica",
-        "JP": "Japan",
-        "JE": "Jersey",
-        "JO": "Jordan",
-        "KZ": "Kazakhstan",
-        "KE": "Kenya",
-        "KI": "Kiribati",
-        "KW": "Kuwait",
-        "KG": "Kyrgyzstan",
-        "LA": "Laos",
-        "LV": "Latvia",
-        "LB": "Lebanon",
-        "LS": "Lesotho",
-        "LR": "Liberia",
-        "LY": "Libya",
-        "LI": "Liechtenstein",
-        "LT": "Lithuania",
-        "LU": "Luxembourg",
-        "MO": "Macao SAR China",
-        "MG": "Madagascar",
-        "MW": "Malawi",
-        "MY": "Malaysia",
-        "MV": "Maldives",
-        "ML": "Mali",
-        "MT": "Malta",
-        "MQ": "Martinique",
-        "MR": "Mauritania",
-        "MU": "Mauritius",
-        "YT": "Mayotte",
-        "MX": "Mexico",
-        "MD": "Moldova",
-        "MC": "Monaco",
-        "MN": "Mongolia",
-        "ME": "Montenegro",
-        "MS": "Montserrat",
-        "MA": "Morocco",
-        "MZ": "Mozambique",
-        "MM": "Myanmar (Burma)",
-        "NA": "Namibia",
-        "NR": "Nauru",
-        "NP": "Nepal",
-        "NL": "Netherlands",
-        "NC": "New Caledonia",
-        "NZ": "New Zealand",
-        "NI": "Nicaragua",
-        "NE": "Niger",
-        "NG": "Nigeria",
-        "NU": "Niue",
-        "MK": "North Macedonia",
-        "NO": "Norway",
-        "OM": "Oman",
-        "PK": "Pakistan",
-        "PS": "Palestine",
-        "PA": "Panama",
-        "PG": "Papua New Guinea",
-        "PY": "Paraguay",
-        "PE": "Peru",
-        "PH": "Philippines",
-        "PN": "Pitcairn Islands",
-        "PL": "Poland",
-        "PT": "Portugal",
-        "PR": "Puerto Rico",
-        "QA": "Qatar",
-        "RE": "Réunion",
-        "RO": "Romania",
-        "RU": "Russia",
-        "RW": "Rwanda",
-        "WS": "Samoa",
-        "SM": "San Marino",
-        "ST": "Sao Tome and Principe",
-        "SA": "Saudi Arabia",
-        "SN": "Senegal",
-        "RS": "Serbia",
-        "SC": "Seychelles",
-        "SG": "Singapore",
-        "SX": "Sint Maarten",
-        "SK": "Slovakia",
-        "SI": "Slovenia",
-        "SB": "Solomon Islands",
-        "SO": "Somalia",
-        "ZA": "South Africa",
-        "GS": "South Georgia and the South Sandwich Islands",
-        "KR": "South Korea",
-        "ES": "Spain",
-        "LK": "Sri Lanka",
-        "BL": "St. Barthélemy",
-        "SH": "St. Helena",
-        "KN": "St. Kitts and Nevis",
-        "LC": "St. Lucia",
-        "MF": "St. Martin",
-        "PM": "St. Pierre and Miquelon",
-        "VC": "St. Vincent and the Grenadines",
-        "SR": "Suriname",
-        "SJ": "Svalbard and Jan Mayen",
-        "SE": "Sweden",
-        "CH": "Switzerland",
-        "TW": "Taiwan",
-        "TJ": "Tajikistan",
-        "TZ": "Tanzania",
-        "TH": "Thailand",
-        "TL": "Timor-Leste",
-        "TG": "Togo",
-        "TK": "Tokelau",
-        "TO": "Tonga",
-        "TT": "Trinidad and Tobago",
-        "TN": "Tunisia",
-        "TR": "Turkey",
-        "TM": "Turkmenistan",
-        "TC": "Turks and Caicos Islands",
-        "TV": "Tuvalu",
-        "UG": "Uganda",
-        "UA": "Ukraine",
-        "AE": "United Arab Emirates",
-        "GB": "United Kingdom",
-        "US": "United States of America",
-        "UY": "Uruguay",
-        "UZ": "Uzbekistan",
-        "VU": "Vanuatu",
-        "VA": "Vatican City",
-        "VN": "Vietnam",
-        "WF": "Wallis and Futuna",
-        "EH": "Western Sahara",
-        "YE": "Yemen",
-        "ZM": "Zambia",
-        "ZW": "Zimbabwe"
-    };
-
-    return countryDictionary;
-
-}
-
-
 
 
 /*
@@ -1225,6 +1369,7 @@ function getCountriesForSelectMenu() {
 Javascript for Pre-built items 
 
 */
+
 
 
 /*
@@ -1246,193 +1391,15 @@ function login_box101(centeredBlock) {
 }
 
 function submitLoginForm101() {
+
+    // Pass ids for form values.
+    let formElements = ["email101", "password101"];
+    let { data, responseType } = ajax_package(formElements, 'json_only', 'login101');
+    ajax_request("/ajax_receive", "POST", data, responseType);
     
-    // Grab form values.
-    var email = document.getElementById('email101').value;
-    var password = document.getElementById('password101').value;
-    
-    // Call the generic AJAX function to send login data.
-    ajaxCall('/login101', 'POST', { email: email, password: password }, function(response) {
-        if(response.success) {
-            handleAjaxResponse('login_success', response);
-            //alert("Login successful!");
-            // You might call a function here to update the UI or navigate.
-            // e.g., navigate('dashboard');
-        } else {
-            //alert("Login failed: " + response.error);
-            handleAjaxResponse('login_failed', response)
-        }
-    });
-    return false; // Prevent default form submission.
+    return false; // Prevent default form submission. 
 }
 
 /* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
 
-function ajax_request(endpoint, method, data, responseType, callback = () => {}) {
-    $.ajax({
-        type: method || "POST",
-        url: endpoint,
-        data: data instanceof FormData ? data : JSON.stringify(data),
-        contentType: data instanceof FormData ? false : "application/json",
-        processData: !(data instanceof FormData),
-        dataType: "json",
-        success: function(response) {
-            callback(response);
-            ajax_handle(responseType, response);
-        },
-        error: function(xhr, status, error) {
-            console.error("AJAX Error:", status, error);
-            callback({ success: false, error: "Request failed: " + error });
-        }
-    });
-}
 
-
-function ajax_handle(responseType, response) {
-    switch (responseType) {
-        case "user_action":
-            console.log("User Action Response:", response.message);
-            break;
-            
-        case "file_upload":
-            console.log("File Upload Success:", response.file_path);
-            alert("File successfully uploaded!");
-            break;
-            
-        case "multi_upload":
-            console.log("Multiple File Upload Success:", response.details);
-            alert("Files have been processed successfully.");
-            break;
-            
-        default:
-            console.error("Unhandled response:", response);
-    }
-}
-
-let selectedFiles = {};  // Store selected files per input field
-
-// Pass in list of element ids
-// 🏗️ Package Data for AJAX
-function package_data_for_ajax(elementIds) {
-    let formData = new FormData();
-    let jsonData = {};
-    let isFormData = false;
-
-    elementIds.forEach(id => {
-        let element = document.getElementById(id);
-        if (!element) {
-            console.warn(`Element with ID '${id}' not found.`);
-            return;
-        }
-
-        switch (element.type) {
-            case "file":
-                if (selectedFiles[id] && selectedFiles[id].length > 0) {
-                    selectedFiles[id].forEach(file => {
-                        formData.append(`${id}[]`, file);  // Append multiple files under the same key
-                    });
-                    jsonData[id] = selectedFiles[id].map(file => file.name);
-                    isFormData = true;
-                }
-                break;
-
-            case "checkbox":
-                jsonData[id] = element.checked;
-                formData.append(id, element.checked);
-                break;
-
-            case "radio":
-                if (element.checked) {
-                    jsonData[id] = element.value;
-                    formData.append(id, element.value);
-                }
-                break;
-
-            default:
-                if (element.tagName === "SELECT" && element.multiple) {
-                    let selectedOptions = Array.from(element.selectedOptions).map(opt => opt.value);
-                    jsonData[id] = selectedOptions;
-                    formData.append(id, JSON.stringify(selectedOptions));
-                } else {
-                    jsonData[id] = element.value.trim();
-                    formData.append(id, element.value.trim());
-                }
-        }
-    });
-
-    // 🏷️ Dynamically Determine Response Type
-    let responseType;
-    if (isFormData && Object.keys(jsonData).length > 0) {
-        responseType = "multi_upload";  // Files + JSON
-    } else if (isFormData) {
-        responseType = "file_upload";   // Only files
-    } else {
-        responseType = "user_action";   // JSON only
-
-    }
-
-    return { data: isFormData ? formData : JSON.stringify(jsonData), responseType };
-}
-
-
-
-
-// Usage Example
-function submitForm() {
-    let formElements = ["username", "email", "fileInput"];
-    let { data, responseType } = package_data_for_ajax(formElements);
-    let method = "POST";
-    let endpoint = "/ajax_receive";
-
-    ajax_request(endpoint, method, data, responseType);
-}
-
-
-function createFileInput(parent, id, acceptedTypes=[], singleOrMultiple='single') {
-    if (singleOrMultiple === 'single') {
-        input(parent, {
-            id: id,
-            type: "file",
-            accept: acceptedTypes.join(","),
-            onchange: `handleFileSelect('${id}')`
-        });
-    } else if (singleOrMultiple === 'multiple') {
-        input(parent, {
-            id: id,
-            type: "file",
-            accept: acceptedTypes.join(","), 
-            multiple: true,
-            onchange: `handleFileSelect('${id}')`
-        });
-    }
-    
-}
-
-
-function handleFileSelect(inputId) {
-    const inputElement = document.getElementById(inputId);
-    if (!inputElement || !inputElement.files.length) return;
-
-    if (!selectedFiles[inputId]) {
-        selectedFiles[inputId] = [];  // Initialize array for this input field
-    }
-
-    let newFiles = [];
-
-    // Append new files while avoiding duplicates
-    for (let file of inputElement.files) {
-        let exists = selectedFiles[inputId].some(f => f.name === file.name && f.size === file.size);
-        if (!exists) {
-            selectedFiles[inputId].push(file);
-            newFiles.push(file.name);
-        }
-    }
-
-    if (newFiles.length > 0) {
-        console.log(`New files selected for ${inputId}:`, newFiles);
-    } else {
-        console.warn(`No new files added for ${inputId}. They may be duplicates.`);
-    }
-
-    inputElement.value = ""; // Clear input field to allow re-selection of the same file
-}
