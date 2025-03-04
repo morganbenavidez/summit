@@ -1,52 +1,44 @@
 
+// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-
-
-
-
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
-
-
-function createToolButtons(container) {
-    var tools = [
-        { name: "Create Container", action: "containerize" },
-        { name: "Upload Network Blueprint", action: 'network_blueprint'},
-        { name: "Deploy Bash Scripts Across Multiple Machines", action: 'deploy_bash_scripts'},
-        { name: "Add Used Port", action: "add_port" },
-        { name: "Reports", action: "reports" },
-        { name: "User Management", action: "user_management" },
-        { name: "Settings", action: "settings" },
-        { name: "Support", action: "support" }
-    ];
-
-    tools.forEach(function(tool) {
-        var button = document.createElement("a");
-        button.innerHTML = tool.name;
-        button.href = `javascript:navigate('${tool.action}')`;
-        button.classList.add("tool-button"); // Optional for styling
-        container.appendChild(button);
-    });
-}
-
-
-
-
-// $$$$$ GLOBAL VARIABLES
 
 // Create an object to store selected files globally
 const fileSelections = {};
 // Validate email format using regex
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+
+
+
+
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+function testJsonOnly() {
+    // list of the ids of elements you want to include
+    let formElements = ["username", "email"];
+    let { data, responseType } = ajax_package(formElements, 'json_only', 'json_1');
+    ajax_request(data, responseType);
+}
+
 
 
 
@@ -64,85 +56,288 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function ajax_validate(data, job, mode) {
 
-    if (mode === 'single_file') {
+    switch (mode) {
 
-    } else if (mode === 'folder_submission') {
+        //🌟 
+        case 'simple_post':
 
-    } else if (mode === 'json_only') {
-        if (job === 'json_1') {
-            let email = data["email"];
-    
-            if (!emailPattern.test(email)) {
-                alert("Invalid email format. Please enter a valid email.");
-                return;
+            // Handle simple_post (LIKE A GET REQUEST)
+            switch (job) {
+
+                // ✅
+                case 'ping':
+                    console.log('simple_post testing');
+                    return;
+
+                // ✅ ADD MORE CASES TO HANDLE HERE
+
+                // ✅
+                default:
+                    console.log('simple_post default');
+                    return;
             }
-        }
-    } else if (mode === 'single_file_and_json') {
-        // Add Validation
-        if (job === 'sfj') {
-            let email = data.get("email");
 
-            if (!emailPattern.test(email)) {
-                alert("Invalid email format. Please enter a valid email.");
-                return;
+        //🌟 
+        case 'json_only':
+
+            // Handle submitting json only (no files or folders)
+            switch (job) {
+                
+                // ✅
+                case 'json_1':
+                    let email = data["email"]
+                    if (!emailPattern.test(email)) {
+                        alert("Invalid email format. Please enter a valid email.");
+                        return;
+                    }
+                    return;
+
+                // ✅ ADD MORE CASES TO HANDLE HERE
+                
+                // ✅
+                default:
+          // ✅ ADD MORE CASES TO HANDLE HERE          console.log('json_only default');
+                    return;
             }
-        }
-    } else if (mode === 'folder_and_json') {
-        // Add Validation
-        if (job === 'fwj') {
-            let email = data.get("email");
 
-            if (!emailPattern.test(email)) {
-                alert("Invalid email format. Please enter a valid email.");
-                return;
+        //🌟 
+        case 'single_file':
+
+            // Handle submitting only a single file
+            switch (job) {
+
+                // ✅
+                case 'testing':
+                    console.log('single_file testing');
+                    return;
+
+                // ✅ ADD MORE CASES TO HANDLE HERE
+
+                // ✅
+                default:
+                    console.log('single_file default');
+                    return;
             }
-        }
-    }
-    
-}
+
+        //🌟 
+        case 'single_file_and_json':
+
+            // Handle submitting json data and a single file
+            switch (job) {
+
+                // ✅
+                case 'testing_single_file_with_json':
+                    let email = data.get("email");
+                    if (!emailPattern.test(email)) {
+                        alert("Invalid email format. Please enter a valid email.");
+                        return;
+                    }
+                    return;
+                
+                // ✅ ADD MORE CASES TO HANDLE HERE
+
+                // ✅
+                default:
+                    console.log('single_file_and_json default');
+                    return;
+            }
 
 
-// Handle responses from ajax calls here
-function ajax_handle(responseType, response) {
-    if (responseType === "json") {
-        // Check if response is an array and extract the first object
-        if (Array.isArray(response)) {
-            response = response[0];
-        }
+        //🌟 
+        case 'folder_submission':
 
-        if (!response.job) {
-            console.warn("No job specified in response:", response);
+            // Handle submitting a folder (many files - will preserve folder structure)
+            switch (job) {
+
+                // ✅
+                case 'testing':
+                    console.log('folder_submission testing');
+                    return;
+
+                // ✅ ADD MORE CASES TO HANDLE HERE
+
+                // ✅
+                default:
+                    console.log('folder_submission default');
+                    return;
+            }
+
+        //🌟 
+        case 'folder_and_json':
+
+            // Handle submitting a folder (many files - will preserve folder structure) and json
+            switch (job) {
+
+                // ✅
+                case 'testing_folder_with_json':
+
+                    let email = data.get("email");
+                    if (!emailPattern.test(email)) {
+                        alert("Invalid email format. Please enter a valid email.");
+                        return;
+                    }
+                    return;
+
+                // ✅ ADD MORE CASES TO HANDLE HERE
+                
+                // ✅
+                default:
+                    console.log('folder_and_json default');
+                    return;
+            }
+        
+        //🌟
+        default:
+            console.log('Not a recognized mode');
             return;
-        }
 
-        switch (response.job) {
-            case 'login101':
-                if (response.success) {
-                    console.log("Login Successful:", response.message);
-                    localStorage.setItem("fname", response.name);
-                    navigate('dashboard');
-                } else if (response.error) {
-                    alert("Error: " + response.error);
-                }
-                break;
-
-            case 'login_failed':
-                let passwordInput = document.getElementById('password101');
-                if (passwordInput) passwordInput.value = "";
-                console.error("Login Failed:", response.error);
-                break;
-
-            // ADD MORE CASES TO HANDLE HERE
-
-            default:
-                console.warn("Unhandled job type:", response.job);
-                break;
-        }
-    } else {
-        console.log("Unexpected response type:", response);
     }
+    
 }
 
+
+
+//🌟 Handle incoming requests 
+function ajax_handle(responseType, response) {
+
+    // Check if response is an array and extract the first object
+    if (Array.isArray(response)) {
+        status_code = response[1];
+        response = response[0];
+    }
+    console.log('status_code: ', status_code);
+    // Ensure job exists in the response
+    if (!response.job) {
+        console.warn("No job specified in response:", response);
+        return;
+    }
+    if (!response.backend_flag) {
+        console.warn("No backend_flag specified in response:", response);
+        return;
+    }
+
+    let mode = response.backend_flag;
+    let job = response.job;
+
+    switch (mode) {
+
+        //🌟 
+        case 'simple_post':
+
+            // Handle simple_post (LIKE A GET REQUEST)
+            switch (job) {
+
+                // ✅
+                case 'ping':
+                    console.log('ping handle testing');
+                    return;
+
+                // ✅ ADD MORE CASES TO HANDLE HERE
+
+                // ✅
+                default:
+                    console.log('simple_post handle default');
+                    return;
+            }
+
+        //🌟 
+        case 'json_only':
+
+            // Handle submitting json only (no files or folders)
+            switch (job) {
+                
+                // ✅
+                case 'login101':
+                    if (response.success) {
+                        console.log("Login Successful:", response.message);
+                        localStorage.setItem("fname", response.name);
+                        navigate('dashboard');
+                        return;
+                    } else {
+                        let passwordInput = document.getElementById('password101');
+                        if (passwordInput) passwordInput.value = "";
+                        console.error("Login Failed:", response.error);
+                        return;
+                    }
+                case 'json_1':
+                    if (response.success) {
+                        console.log('Username: ', response.username);
+                        return;
+                    }
+
+                // ✅ ADD MORE CASES TO HANDLE HERE
+                
+                // ✅
+                default:
+                    console.log('json_only handle default');
+                    return;
+            }
+
+        //🌟 
+        case 'single_file':
+
+            // Handle submitting only a single file
+            switch (job) {
+
+                // ✅ ADD MORE CASES TO HANDLE HERE
+
+                // ✅
+                default:
+                    console.log('single_file handle default');
+                    return;
+            }
+
+        //🌟 
+        case 'single_file_and_json':
+
+            // Handle submitting json data and a single file
+            switch (job) {
+                
+                // ✅ ADD MORE CASES TO HANDLE HERE
+
+                // ✅
+                default:
+                    console.log('single_file_and_json handle default');
+                    return;
+            }
+
+
+        //🌟 
+        case 'folder_submission':
+
+            // Handle submitting a folder (many files - will preserve folder structure)
+            switch (job) {
+
+                // ✅ ADD MORE CASES TO HANDLE HERE
+
+                // ✅
+                default:
+                    console.log('folder_submission handle default');
+                    return;
+            }
+
+        //🌟 
+        case 'folder_and_json':
+
+            // Handle submitting a folder (many files - will preserve folder structure) and json
+            switch (job) {
+
+                // ✅ ADD MORE CASES TO HANDLE HERE
+                
+                // ✅
+                default:
+                    console.log('folder_and_json handle default');
+                    return;
+            }
+        
+        //🌟
+        default:
+            console.log('Not a recognized mode - handle error');
+            return;
+
+    }
+    
+}
 
 
 
@@ -161,36 +356,19 @@ function ajax_handle(responseType, response) {
 // Package your ajax calls with this
 function ajax_package(formElements, mode, job) {
     console.log('job: ', job);
-    if (mode === 'single_file') {
-        let formData = new FormData();
-        formData.append("backend_flag", 'single_file');
-        formData.append("job", job);
-        formElements.forEach(id => {
-            let input = document.getElementById(id);
-            if (input && input.files.length > 0) {
-                formData.append(id, input.files[0]);
-            }
-        });
+
+    if (mode === 'simple_post') {
+
+        let jsonData = {
+            backend_flag: "simple_post",
+            job: job
+        };
+
+        return { data: jsonData, responseType: "json" };
         
-        // Add Validation
-        ajax_validate(formData, job, mode);
+    }
 
-        return { data: formData, responseType: "json" };
-    } else if (mode === 'folder_submission') {
-        var inputId = formElements[0];
-        let formData = new FormData();
-        formData.append("backend_flag", 'multiple_files');
-        formData.append("job", job);
-       
-        fileSelections[inputId].forEach(file => {
-            formData.append("multiFiles", file, file.webkitRelativePath);
-        });
-
-        // Add Validation
-        ajax_validate(formData, job, mode);
-
-        return { data: formData, responseType: "json" };
-    } else if (mode === 'json_only') {
+    if (mode === 'json_only') {
         
         let jsonData = {
             backend_flag: "json_only",
@@ -209,6 +387,22 @@ function ajax_package(formElements, mode, job) {
         
         return { data: jsonData, responseType: "json" };
         
+    } else if (mode === 'single_file') {
+        let formData = new FormData();
+        formData.append("backend_flag", 'single_file');
+        formData.append("job", job);
+        formElements.forEach(id => {
+            let input = document.getElementById(id);
+            if (input && input.files.length > 0) {
+                formData.append(id, input.files[0]);
+            }
+        });
+        
+        // Add Validation
+        ajax_validate(formData, job, mode);
+
+        return { data: formData, responseType: "json" };
+
     } else if (mode === 'single_file_and_json') {
 
         let formData = new FormData();
@@ -238,13 +432,27 @@ function ajax_package(formElements, mode, job) {
 
         return { data: formData, responseType: "json" };
 
+    } else if (mode === 'folder_submission') {
+        var inputId = formElements[0];
+        let formData = new FormData();
+        formData.append("backend_flag", 'multiple_files');
+        formData.append("job", job);
+       
+        fileSelections[inputId].forEach(file => {
+            formData.append("multiFiles", file, file.webkitRelativePath);
+        });
+
+        // Add Validation
+        ajax_validate(formData, job, mode);
+
+        return { data: formData, responseType: "json" };
+
     } else if (mode === 'folder_and_json') {
         var inputId = formElements[0];
         let formData = new FormData();
         formData.append("backend_flag", 'folder_and_json');
         formData.append("job", job);
 
-        
         formElements.forEach(id => {
             let input = document.getElementById(id);
             if (!input) return;
@@ -269,9 +477,11 @@ function ajax_package(formElements, mode, job) {
 }
 
 
-
 // All ajax requests are made through this function
-function ajax_request(endpoint, method, data, responseType, callback = () => {}) {
+function ajax_request(data, responseType, callback = () => {}) {
+
+    let endpoint = '/ajax_receive'
+    let method = 'POST'
 
     $.ajax({
         type: method || "POST",
@@ -1407,20 +1617,15 @@ function singleImageContainer(sourceDivId, sourceClass, source, centeredBlock) {
 
 
 
-// $$$$$$$$$$$$$$$$$$  RANDOM   $$$$$$$$$$$$$$$$$$$$$$$$$$
-
-
-
-
-
-
-
-/*
-
-Javascript for Pre-built items 
-
-*/
-
+// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
 /*
@@ -1446,9 +1651,9 @@ function submitLoginForm101() {
     // Pass ids for form values.
     let formElements = ["email101", "password101"];
     let { data, responseType } = ajax_package(formElements, 'json_only', 'login101');
-    ajax_request("/ajax_receive", "POST", data, responseType);
+    ajax_request(data, responseType);
     
-    return false; // Prevent default form submission. 
+    return false; // Prevent default form submission.
 }
 
 /* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/

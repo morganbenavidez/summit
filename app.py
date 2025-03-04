@@ -10,8 +10,6 @@ import os
 app = Flask(__name__)
 
 
-email_pattern = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
-
 
 # Make sure you return a page='something' when you need to 
 # render_template. Most routing should happen on front end
@@ -28,11 +26,97 @@ def home():
     return render_template("index.html", page=page)
 
 
+def ajax_process(file, backend_flag, job, data=False):
+    print('ajax_process')
+
+    match backend_flag:
+        # 🌟 
+        case 'simple_post':
+            match job:
+                # ✅
+                case 'ping':
+                    return handle_ping(job, backend_flag)
+
+                # ✅ ADD CASES HERE
+
+                # ✅
+                case _:
+                    return {"success": False, "job": False, "backend_flag": backend_flag, "error": "Unknown job for simple_post"}, 400
+        # 🌟
+        case 'json_only':
+            if not isinstance(file, dict):
+                return {"success": False, "job": job, "backend_flag": backend_flag, "error": "Invalid JSON data"}, 400  
+            match job:
+                # ✅
+                case "json_1":
+                    return process_json_1(file, job, backend_flag)
+                # ✅
+                case "login101":
+                    return process_login(file, job, backend_flag)
+
+                # ✅ ADD CASES HERE
+
+                # ✅
+                case _:
+                    return {"success": False, "job": False, "backend_flag": backend_flag, "error": "Invalid job for JSON processing"}, 400
+        # 🌟
+        case 'single_file':
+            match job:
+                # ✅
+                case 'firstFile':
+                    return process_single_file(file, job, backend_flag)
+
+                # ✅ ADD CASES HERE
+
+                # ✅
+                case _:
+                    return {"success": False, "job": False, "backend_flag": backend_flag, "error": "Invalid job for single file upload"}, 400
+        # 🌟
+        case 'single_file_and_json':
+            match job:
+                # ✅
+                case 'testing_single_file_with_json':
+                    return process_file_and_json(file, data, job, backend_flag)
+
+                # ✅ ADD CASES HERE
+
+                # ✅
+                case _:
+                    return {"success": False, "job": False, "backend_flag": backend_flag, "error": "Invalid job for single_file_and_json"}, 400
+        # 🌟
+        case 'multiple_files':
+            match job:
+                # ✅
+                case 'firstFolder':
+                    return process_multiple_files(file, job, backend_flag)
+
+                # ✅ ADD CASES HERE
+
+                # ✅
+                case _:
+                    return {"success": False, "job": False, "backend_flag": backend_flag, "error": "Invalid job for multiple files"}, 400
+        # 🌟
+        case 'folder_and_json':
+            match job:
+                # ✅
+                case 'testing_folder_with_json':
+                    return process_folder_and_json(file, data, job, backend_flag)
+
+                # ✅ ADD CASES HERE
+
+                # ✅
+                case _:
+                    return {"success": False, "job": False, "backend_flag": backend_flag, "error": "Invalid job for folder_and_json"}, 400
+        # 🌟
+        case _:
+            return {"success": False, "job": False, "backend_flag": False, "error": "Invalid backend flag"}, 400
+
+
 @app.route('/ajax_receive', methods=['POST'])
 def ajax_receive():
     
     #Handles both file and JSON uploads by checking backend_flag.
-    
+    print('receive')
     # Determine if request is JSON or FormData
     if request.content_type.startswith('application/json'):
         try:
@@ -57,7 +141,15 @@ def ajax_receive():
     print('bf: ', backend_flag)
     print('job: ', job)
 
-    if backend_flag == 'single_file':
+    if backend_flag == 'simple_post':
+
+        return jsonify(ajax_process(data, backend_flag, job))
+
+    elif backend_flag == 'json_only':
+
+        return jsonify(ajax_process(data, backend_flag, job))
+
+    elif backend_flag == 'single_file':
         print('single file')
         if not request.files or len(request.files) != 1 or 'singleFile' not in request.files:
             return jsonify({"error": "Invalid upload: Only one file allowed"}), 400
@@ -69,18 +161,6 @@ def ajax_receive():
 
         # Forward file to processing function
         return jsonify(ajax_process(file, backend_flag, job))
-    
-    elif backend_flag == 'multiple_files':
-        print('multiple files (folder)')
-        # Extract multiple files
-        files = request.files.getlist('multiFiles')  
-        if not files:
-            return jsonify({"error": "No valid files found in request"}), 400
-        return jsonify(ajax_process(files, backend_flag, job))
-    
-    elif backend_flag == 'json_only':
-
-        return jsonify(ajax_process(data, backend_flag, job))
 
     elif backend_flag == 'single_file_and_json':
         print('single and json')
@@ -94,6 +174,14 @@ def ajax_receive():
 
         # Forward file to processing function
         return jsonify(ajax_process(file, backend_flag, job, data))
+    
+    elif backend_flag == 'multiple_files':
+        print('multiple files (folder)')
+        # Extract multiple files
+        files = request.files.getlist('multiFiles')  
+        if not files:
+            return jsonify({"error": "No valid files found in request"}), 400
+        return jsonify(ajax_process(files, backend_flag, job))
 
     elif backend_flag == 'folder_and_json':
         print('folder and json')
@@ -107,8 +195,10 @@ def ajax_receive():
 
 
 
+"""
 def ajax_process(file, backend_flag, job, data=False):
     print('ajax_process')
+
     if (backend_flag == 'single_file'):
 
         # Declare variable
@@ -206,7 +296,7 @@ def ajax_process(file, backend_flag, job, data=False):
             print('file: ', file)
             # Can check against database, etc.
             STORED_EMAIL = "test@test.com"
-            STORED_PASSWORD = "YourPassword"
+            STORED_PASSWORD = "password"
 
             password = file.get("password101", "").strip()
             email = file.get("email101", "").strip()
@@ -280,7 +370,7 @@ def ajax_process(file, backend_flag, job, data=False):
         UPLOAD_FOLDER = ''
         saved_files = []
 
-        if (job == 'fwj'):
+        if (job == 'testing_folder_with_json'):
             username = data.get("username", "").strip()
             email = data.get("email", "").strip()
 
@@ -334,7 +424,7 @@ def ajax_process(file, backend_flag, job, data=False):
     else:
         return {"message": "Ajax processing failed"}
 
-
+"""
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5078)

@@ -151,43 +151,50 @@ function loadDashboardPage(titleContent, metaContent) {
 
     // AJAX PRACTICE
 
-    // Single File
-    //h1(centeredBlock, { innerHTML: "Test: Single File Upload" });
-    //createFileInput(centeredBlock, "singleFile", ".png,.jpeg", 'single_file', 'firstFile');
+    // Simple Post (GET)
+    let { data, responseType } = ajax_package([], 'simple_post', 'ping');
+    console.log('data: ', data);
+    console.log('rT: ', responseType);
+    ajax_request(data, responseType);
 
-    
-    // Folder Upload
-    //h1(centeredBlock, { innerHTML: "Test: Multiple File Upload" });
-    // parent element, id, allowedTypes, backend_flag, job
-    //createFileInput(centeredBlock, "multiFiles", ".png,.jpeg", 'folder_submission', 'firstFolder');
-    
-    
     // JSON Only
     h1(centeredBlock, { innerHTML: "Test: JSON Data Only" });
     input(centeredBlock, { id: "username", type: "text", placeholder: "Enter Username" });
     input(centeredBlock, { id: "email", type: "email", placeholder: "Enter Email" });
     button(centeredBlock, { innerHTML: "Submit JSON", onclick: "testJsonOnly()" });
 
-    
+    // Single File
+    //h1(centeredBlock, { innerHTML: "Test: Single File Upload" });
+    //createFileInput(centeredBlock, "singleFile", ".png,.jpeg", 'single_file', 'firstFile');
+
     // Single File + JSON
     //h1(centeredBlock, { innerHTML: "Test: Single File + JSON" });
     //input(centeredBlock, { id: "username", type: "text", placeholder: "Enter Username" });
     //input(centeredBlock, { id: "email", type: "email", placeholder: "Enter Email" });
-    //createFileInput(centeredBlock, "singleFileWithJson", ".png,.jpeg", 'single_file_and_json', 'sfj', ['username', 'email']);
+    //createFileInput(centeredBlock, "singleFileWithJson", ".png,.jpeg", 'single_file_and_json', 'testing_single_file_with_json', ['username', 'email']);
+    
+    // Folder Upload
+    //h1(centeredBlock, { innerHTML: "Test: Multiple File Upload" });
+    // parent element, id, allowedTypes, backend_flag, job
+    //createFileInput(centeredBlock, "multiFiles", ".png,.jpeg", 'folder_submission', 'firstFolder');
     
     // Multi File + JSON
     //h1(centeredBlock, { innerHTML: "Test: Multiple Files + JSON" });
     //input(centeredBlock, { id: "username", type: "text", placeholder: "Enter Username" });
     //input(centeredBlock, { id: "email", type: "email", placeholder: "Enter Email" });
-    //createFileInput(centeredBlock, "multiFilesWithJson", ".png,.jpeg", 'folder_and_json', 'fwj', ['username', 'email']);
+    //createFileInput(centeredBlock, "multiFilesWithJson", ".png,.jpeg", 'folder_and_json', 'testing_folder_with_json', ['username', 'email']);
 
     
 };
 
 // Add functions to load pages here
 
-
-
+function testJsonOnly() {
+    // list of the ids of elements you want to include
+    let formElements = ["username", "email"];
+    let { data, responseType } = ajax_package(formElements, 'json_only', 'json_1');
+    ajax_request(data, responseType);
+}
 
 
 
