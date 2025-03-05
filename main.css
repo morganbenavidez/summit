@@ -1,5 +1,9 @@
 
 
+
+/* YOU CAN DELETE ANYTHING HERE */
+/* ADD YOUR CUSTOM CSS HERE */
+
 #summit_image {
     display: block;
     margin: auto;
@@ -38,4 +42,12 @@ h1 {
 
 #text-container a:hover {
     text-decoration: underline;
+}
+
+input {
+    text-align: center;
+}
+
+textarea {
+    text-align: center;
 }

@@ -219,6 +219,9 @@ function ajax_handle(responseType, response) {
     let mode = response.backend_flag;
     let job = response.job;
 
+    console.log('ajax_handle (backend_flag): ', mode);
+    console.log('ajax_handle (job): ', job);
+
     switch (mode) {
 
         //🌟 
@@ -230,6 +233,7 @@ function ajax_handle(responseType, response) {
                 // ✅
                 case 'ping':
                     console.log('ping handle testing');
+                    console.log(response.message);
                     return;
 
                 // ✅ ADD MORE CASES TO HANDLE HERE
@@ -256,12 +260,19 @@ function ajax_handle(responseType, response) {
                     } else {
                         let passwordInput = document.getElementById('password101');
                         if (passwordInput) passwordInput.value = "";
-                        console.error("Login Failed:", response.error);
+                        console.error("Login Failed:", response.message);
                         return;
                     }
+                // ✅
                 case 'json_1':
                     if (response.success) {
                         console.log('Username: ', response.username);
+                        return;
+                    }
+                // ✅
+                case 'simpleForm102':
+                    if (response.success) {
+                        console.log('Name: ', response.name);
                         return;
                     }
 
@@ -355,7 +366,9 @@ function ajax_handle(responseType, response) {
 
 // Package your ajax calls with this
 function ajax_package(formElements, mode, job) {
-    console.log('job: ', job);
+
+    console.log('ajax_package (backend_flag): ', mode);
+    console.log('ajax_package (job): ', job)
 
     if (mode === 'simple_post') {
 
@@ -410,23 +423,23 @@ function ajax_package(formElements, mode, job) {
         formData.append("job", job);
 
         formElements.forEach(id => {
-            console.log('id: ', id);
+            //console.log('id: ', id);
             let input = document.getElementById(id);
             if (!input) return;
 
             if (input.type === "file" && input.files.length > 0) {
                 formData.append(id, input.files[0]);
             } else if (input.tagName === "SELECT") {
-                console.log('select');
-                console.log(input.value);
+                //console.log('select');
+                //console.log(input.value);
                 formData.append(id, input.value);
             } else {
                 formData.append(id, input.value.trim());
             }
         });
 
-        console.log("FORM DATA");
-        console.log(formData);
+        //console.log("FORM DATA");
+        //console.log(formData);
         // Add Validation
         ajax_validate(formData, job, mode);
 
@@ -491,8 +504,8 @@ function ajax_request(data, responseType, callback = () => {}) {
         processData: !(data instanceof FormData),
         dataType: "json",
         success: function(response) {
-            console.log('responseType: ', responseType);
-            console.log('response: ', response);
+            //console.log('responseType: ', responseType);
+            //console.log('response: ', response);
             callback(response);
             ajax_handle(responseType, response);
         },
@@ -1095,82 +1108,65 @@ function createSelectWithOptions(parentElement, attributes, options, firstOption
 
 
 // Function to create and append checkboxes with labels
-
+// Function to create and append checkboxes with labels (each on a new line)
+// Function to create and append checkboxes with labels
 function createCheckboxesWithOptions(attributes, options, parentElement) {
-
     const container = document.createElement('div');
+    container.classList.add("checkbox-container");
 
     options.forEach(option => {
+        const itemWrapper = document.createElement('div'); // Wrap each checkbox-label pair
+        itemWrapper.classList.add("checkbox-item"); // Ensures alignment
 
         const checkbox = createAndAppendElement('input', {
-
             type: 'checkbox',
-
             id: option.id,
-
             name: attributes.name,
-
-            class: attributes.class,
-
+            class: 'check_class',
             value: option.value
-
-        }, container);
+        }, itemWrapper);
 
         createAndAppendElement('label', {
-
             for: checkbox.id,
-
             innerHTML: option.label
+        }, itemWrapper);
 
-        }, container);
-
+        container.appendChild(itemWrapper);
     });
 
     parentElement.appendChild(container);
-
     return container;
-
 }
-
-
 
 // Function to create and append radio buttons with labels
-
 function createRadioButtonsWithOptions(attributes, options, parentElement) {
-
     const container = document.createElement('div');
+    container.classList.add("radio-container");
 
     options.forEach(option => {
-
+        const itemWrapper = document.createElement('div'); // Wrap each radio-label pair
+        itemWrapper.classList.add("radio-item"); // Ensures alignment
         const radioButton = createAndAppendElement('input', {
-
             type: 'radio',
-
             id: option.id,
-
             name: attributes.name,
-
-            class: attributes.class,
-
+            class: 'radio_class',
             value: option.value
-
-        }, container);
+        }, itemWrapper);
 
         createAndAppendElement('label', {
-
             for: radioButton.id,
-
             innerHTML: option.label
+        }, itemWrapper);
 
-        }, container);
-
+        container.appendChild(itemWrapper);
     });
 
     parentElement.appendChild(container);
-
     return container;
-
 }
+
+
 
 
 function createFileInput(parent, id, allowedTypes, mode, job, formElements=false) {
@@ -1628,6 +1624,225 @@ function singleImageContainer(sourceDivId, sourceClass, source, centeredBlock) {
 // $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
+function simpleForm102(centered_block, elements, containerBorderColor = "#3498db", inputBorderColor = "#ccc", submitButtonColor="#007bff", submitHover="#ccc") {
+
+    let counts = {}; // Track the count of each type to ensure unique IDs
+    let formElementIds = []; // Store IDs of all form elements (except submit button)
+
+    // Create the form container
+    const container = form(centered_block, { id: "form_box102" });
+
+    elements.forEach(({ type, options = [], title, ...attributes }) => {
+        let baseId = type + "102";
+        counts[type] = (counts[type] || 0) + 1;
+        let finalId = counts[type] > 1 ? `${baseId}_${counts[type]}` : baseId;
+        attributes.id = finalId;
+
+        let wrapper;
+
+        if (type === "select") {
+            wrapper = div(container, { class: "input-wrapper" });
+            createSelectWithOptions(wrapper, attributes, options, "Choose an option");
+            formElementIds.push(finalId);
+        } 
+        else if (type === "textarea") {
+            attributes.style = `width: ${attributes.width || '90%'}; height: ${attributes.height || '150px'};`;
+            textarea(container, attributes);
+            formElementIds.push(finalId);
+        } 
+        else if (type === "radio") {
+            wrapper = div(container, { class: "radio-group" });
+            if (title) h4(wrapper, { innerHTML: title, class: "group-title" });
+            createRadioButtonsWithOptions(attributes, options.map((opt, index) => ({
+                id: `${finalId}_${index + 1}`,
+                value: opt,
+                label: opt
+            })), wrapper);
+            container.appendChild(wrapper);
+            formElementIds.push(finalId);
+        } 
+        else if (type === "checkbox") {
+            wrapper = div(container, { class: "checkbox-group" });
+            if (title) h4(wrapper, { innerHTML: title, class: "group-title" });
+            createCheckboxesWithOptions(attributes, options.map((opt, index) => ({
+                id: `${finalId}_${index + 1}`,
+                value: opt,
+                label: opt
+            })), wrapper);
+            container.appendChild(wrapper);
+            formElementIds.push(finalId);
+        }
+        else if (type === "submit") {
+            attributes.type = type;
+            input(container, attributes);
+        }
+        else {
+            attributes.type = type;
+            input(container, attributes);
+            formElementIds.push(finalId);
+        }
+    });
+
+    // Store IDs globally for submitSimpleForm102 to use
+    window.formElementIds = formElementIds;
+
+
+    // Apply styles after form is built
+    function styleFormElements(formContainer, containerBorderColor, inputBorderColor) {
+        Object.assign(formContainer.style, {
+            width: "320px",
+            margin: "50px auto",
+            padding: "20px",
+            border: `1px solid ${containerBorderColor}`,
+            borderRadius: "5px",
+            background: "#fff",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+            gap: "15px"
+        });
+
+        // Debugging: Show background colors to verify structure
+        const groups = formContainer.querySelectorAll(".radio-group, .checkbox-group");
+        groups.forEach(group => {
+            Object.assign(group.style, {
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center", // Keep title centered
+                padding: "10px",
+                border: `1px solid ${inputBorderColor}`,
+                borderRadius: "5px",
+                width: "100%"
+            });
+
+            // Left-align only the container inside
+            const innerContainer = group.querySelector(".radio-container, .checkbox-container");
+            if (innerContainer) {
+                Object.assign(innerContainer.style, {
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start", // Fully left-align radio buttons & checkboxes
+                    width: "90%", 
+                    margin: "0 auto"
+                });
+            }
+        });
+
+        // Style group titles (centered inside group containers)
+        const groupTitles = formContainer.querySelectorAll(".group-title");
+        groupTitles.forEach(title => {
+            Object.assign(title.style, {
+                margin: "0 0 5px 0",
+                fontSize: "16px",
+                fontWeight: "bold",
+                color: "#333",
+                width: "100%",
+                textAlign: "center" // Keeps title centered inside container
+            });
+        });
+
+        // Style radio and checkbox items (inputs + labels)
+        const inputItems = formContainer.querySelectorAll(".radio-item, .checkbox-item");
+        inputItems.forEach(item => {
+            Object.assign(item.style, {
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-start", // Ensures left alignment
+                gap: "5px", // Small, consistent gap between input and label
+                width: "100%"
+            });
+
+            // Ensure input stays fully left
+            const input = item.querySelector("input");
+            if (input) {
+                Object.assign(input.style, {
+                    margin: "0", // Remove extra spacing
+                    width: "auto", // Prevents radio buttons from stretching
+                    height: "18px", // Standard size for radio buttons
+                    flexShrink: "0" // Prevents input from resizing
+                });
+            }
+
+            // Ensure labels align properly with their inputs
+            const label = item.querySelector("label");
+            if (label) {
+                Object.assign(label.style, {
+                    margin: "0",
+                    padding: "0",
+                    flexGrow: "0",
+                    textAlign: "left" // Ensures the label aligns to the left
+                });
+            }
+        });
+
+        // Style individual form elements (EXCLUDE radio & checkbox inputs)
+        const inputs = formContainer.querySelectorAll("input:not([type='radio']):not([type='checkbox']), select, textarea");
+        inputs.forEach(input => {
+            Object.assign(input.style, {
+                padding: "10px",
+                margin: "5px",
+                border: `1px solid ${inputBorderColor}`,
+                borderRadius: "5px",
+                width: input.tagName === "TEXTAREA" ? "90%" : "200px",
+                maxWidth: "280px",
+                transition: "0.3s"
+            });
+
+            input.addEventListener("focus", () => {
+                input.style.borderColor = darkenColor(inputBorderColor, 10);
+            });
+
+            input.addEventListener("blur", () => {
+                input.style.borderColor = inputBorderColor;
+            });
+        });
+
+        // Style Submit Button
+        const buttons = formContainer.querySelectorAll("input[type='submit']");
+        buttons.forEach(button => {
+            Object.assign(button.style, {
+                padding: "10px",
+                margin: "10px 0",
+                border: "none",
+                borderRadius: "5px",
+                backgroundColor: submitButtonColor, // Primary color
+                color: "#fff",
+                fontSize: "16px",
+                cursor: "pointer",
+                width: "200px", // Consistent with input fields
+                maxWidth: "100%",
+                transition: "0.3s"
+            });
+
+            button.addEventListener("mouseover", () => {
+                button.style.backgroundColor = submitHover; // Darker on hover
+            });
+
+            button.addEventListener("mouseout", () => {
+                button.style.backgroundColor = submitButtonColor;
+            });
+        });
+
+    }
+
+    // Helper function to darken a hex color (used for focus effect)
+    function darkenColor(hex, percent) {
+        let num = parseInt(hex.slice(1), 16),
+            amt = Math.round(2.55 * percent),
+            r = (num >> 16) - amt,
+            g = ((num >> 8) & 0x00FF) - amt,
+            b = (num & 0x0000FF) - amt;
+        return `#${(0x1000000 + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+    }
+
+    // Apply styling after elements are built
+    styleFormElements(container, containerBorderColor, inputBorderColor);
+}
+
+
 /*
 
 Login form without Create Account option
@@ -1635,7 +1850,7 @@ Login form without Create Account option
 */
 
 /* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
-
+/*
 function login_box101(centeredBlock) {
 
     const login_box = div(centeredBlock, {id: "login_box101"});
@@ -1645,6 +1860,79 @@ function login_box101(centeredBlock) {
     input(login_form, {id: 'password101', name: 'password101', type: 'password', placeholder: 'Password'});
     input(login_form, {type: 'submit', value: 'Log In'});
 }
+*/
+
+function login_box101(centeredBlock) {
+    // Create & inject styles (inside the function itself)
+    if (!document.getElementById("login_styles101")) {
+        const style = document.createElement("style");
+        style.id = "login_styles101";
+        style.innerHTML = `
+            /* Login Box */
+            #login_box101 {
+                width: 320px;
+                margin: 50px auto;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                background: #fff;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+
+            /* Heading */
+            #login_box101 h1 {
+                text-align: center;
+                font-size: 24px;
+                margin-bottom: 20px;
+                color: #333;
+            }
+
+            /* Login Form */
+            #login_form101 {
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* Input Fields */
+            #login_form101 input[type="email"],
+            #login_form101 input[type="password"] {
+                padding: 10px;
+                margin-bottom: 15px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 16px;
+            }
+
+            /* Submit Button */
+            #login_form101 input[type="submit"] {
+                padding: 10px;
+                border: none;
+                border-radius: 4px;
+                background-color: #007bff;
+                color: #fff;
+                font-size: 16px;
+                cursor: pointer;
+            }
+
+            #login_form101 input[type="submit"]:hover {
+                background-color: #0056b3;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Create the login box
+    const login_box = div(centeredBlock, { id: "login_box101" });
+    h1(login_box, { innerHTML: "Login" });
+
+    // Create the form
+    const login_form = form(login_box, { id: 'login_form101', onsubmit: 'return submitLoginForm101();' });
+    input(login_form, { id: 'email101', name: 'email101', type: 'email', placeholder: 'Email' });
+    input(login_form, { id: 'password101', name: 'password101', type: 'password', placeholder: 'Password' });
+    input(login_form, { type: 'submit', value: 'Log In' });
+}
+
+
 
 function submitLoginForm101() {
 
@@ -1655,6 +1943,29 @@ function submitLoginForm101() {
     
     return false; // Prevent default form submission.
 }
+
+function submitSimpleForm102() {
+
+    // Retrieve stored IDs
+    let formElements = window.formElementIds || [];
+
+    // Ensure we are passing the correct elements
+    console.log("Submitting Form with IDs:", formElements);
+
+    let { data, responseType } = ajax_package(formElements, 'json_only', 'simpleForm102');
+    ajax_request(data, responseType);
+    
+    return false; // Prevent default form submission.
+}
+
+
+function testJsonOnly() {
+    // list of the ids of elements you want to include
+    let formElements = ["username", "email"];
+    let { data, responseType } = ajax_package(formElements, 'json_only', 'json_1');
+    ajax_request(data, responseType);
+}
+
 
 /* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
 

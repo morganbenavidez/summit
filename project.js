@@ -43,9 +43,16 @@ window.onpageshow = function(event) {
 };
 
 
-
-
 // $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
 
 
 // $$$$$ Add new cases, titleContents, metaContents, and load functions for each page you create   $$$$$$$$
@@ -59,8 +66,8 @@ function loadPage(page) {
     switch (page) {
 
         case 'home':
-            titleContent = 'Summit Framework';
-            metaContent = 'A framework built to get you from base camp to the summit quickly!';
+            titleContent = 'Omnexus - All roads lead here';
+            metaContent = 'Connecting the world with Ai';
             loadHomePage(titleContent, metaContent);
             break;
         case 'documentation':
@@ -104,13 +111,14 @@ function loadHomePage(titleContent, metaContent) {
     // set new title and meta content
     startOffAPage(centeredBlock, titleContent, metaContent);
 
-    img(document.getElementById('centered_block'), { id: "summit_image", src: "/static/images/summit.png" });
 
-    const text_container = div(centeredBlock, {id: "text-container"});
+    img(document.getElementById('centered_block'), { id: "summit_image", src: "/static/images/summit.png" });
+    const text_container = div(centeredBlock, {id: "text_container"});
+
     h1(text_container, {innerHTML: "Welcome to base camp. Let's get you to the Summit!"});
-    //a(text_container, {href: "javascript:navigate('documentation')", innerHTML: "Documentation"});
-    //const text_container2 = div(centeredBlock, {id: "text-container2"});
-    a(text_container, {href: "javascript:navigate('login')", innerHTML: "Login"});
+    a(text_container, {href: "javascript:navigate('documentation')", innerHTML: "Documentation"});
+    const text_container2 = div(centeredBlock, {id: "text-container2"});
+    a(text_container2, {href: "javascript:navigate('login')", innerHTML: "Login"});
     
 
 };
@@ -125,6 +133,7 @@ function loadDocumentationPage(titleContent, metaContent) {
     h1(centeredBlock, {innerHTML: "Summit Documentation"});
     
 };
+
 
 function loadLoginPage(titleContent, metaContent) {
 
@@ -149,19 +158,35 @@ function loadDashboardPage(titleContent, metaContent) {
     var storedName = localStorage.getItem("fname");
     p(centeredBlock, {innerHTML: storedName});
 
+
+    
+    // Build the form without styling
+    // Build the form
+    simpleForm102(centeredBlock, [
+        { type: "text", placeholder: "Name", class: "input-field", required: true},
+        { type: "email", placeholder: "Email", class: "input-field", required: true},
+        { type: "number", placeholder: "Age", class: "input-field", required: true },
+        { type: "textarea", placeholder: "Enter your message", width: "280px", height: "150px", class: "textarea-field", required: true},
+        { type: "select", options: { opt1: "Option 1", opt2: "Option 2", opt3: "Option 3" }, class: "dropdown", required: true},
+        { type: "radio", name: "gender", title: "Gender", options: ["Male", "Female", "Other"], class: "radio-group", required: true},
+        { type: "checkbox", name: "subscribe", title: "Preferences", options: ["Subscribe to newsletter", "Accept Terms"], class: "checkbox-group", required: true},
+        { type: "submit", innerHTML: "Submit", onclick: "submitSimpleForm102()"}
+    ], "#ccc", "#ccc", "#007bff", "#0056b3");
+
+   
     // AJAX PRACTICE
 
     // Simple Post (GET)
     let { data, responseType } = ajax_package([], 'simple_post', 'ping');
-    console.log('data: ', data);
-    console.log('rT: ', responseType);
     ajax_request(data, responseType);
 
+
     // JSON Only
-    h1(centeredBlock, { innerHTML: "Test: JSON Data Only" });
-    input(centeredBlock, { id: "username", type: "text", placeholder: "Enter Username" });
-    input(centeredBlock, { id: "email", type: "email", placeholder: "Enter Email" });
-    button(centeredBlock, { innerHTML: "Submit JSON", onclick: "testJsonOnly()" });
+    //h1(centeredBlock, { innerHTML: "Test: JSON Data Only" });
+    //input(centeredBlock, { id: "username", type: "text", placeholder: "Enter Username" });
+    //input(centeredBlock, { id: "email", type: "email", placeholder: "Enter Email" });
+    //button(centeredBlock, { innerHTML: "Submit JSON", onclick: "testJsonOnly()" });
+
 
     // Single File
     //h1(centeredBlock, { innerHTML: "Test: Single File Upload" });
@@ -187,20 +212,15 @@ function loadDashboardPage(titleContent, metaContent) {
     
 };
 
+
+
+
 // Add functions to load pages here
 
-function testJsonOnly() {
-    // list of the ids of elements you want to include
-    let formElements = ["username", "email"];
-    let { data, responseType } = ajax_package(formElements, 'json_only', 'json_1');
-    ajax_request(data, responseType);
-}
 
 
 
 
-
-// Customizable but necessary support functions
 
 
 

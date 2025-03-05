@@ -26,6 +26,11 @@ def home():
     return render_template("index.html", page=page)
 
 
+
+# 🌟 This is where you will add logic to handle your 
+# 🌟 backend. Think of matching the backend_flag and job 
+# 🌟 as routes in vanilla flask. You pass these from the front end
+# 🌟 and they are handled here.
 def ajax_process(file, backend_flag, job, data=False):
     print('ajax_process')
 
@@ -35,83 +40,91 @@ def ajax_process(file, backend_flag, job, data=False):
             match job:
                 # ✅
                 case 'ping':
-                    return handle_ping(job, backend_flag)
+                    return handle_ping(backend_flag, job)
 
                 # ✅ ADD CASES HERE
 
                 # ✅
                 case _:
-                    return {"success": False, "job": False, "backend_flag": backend_flag, "error": "Unknown job for simple_post"}, 400
+                    return {"success": False, "backend_flag": backend_flag,"job": False, "message": "Unknown job for simple_post"}, 400
         # 🌟
         case 'json_only':
             if not isinstance(file, dict):
-                return {"success": False, "job": job, "backend_flag": backend_flag, "error": "Invalid JSON data"}, 400  
+                return {"success": False, "backend_flag": backend_flag,"job": job, "message": "Invalid JSON data"}, 400  
             match job:
                 # ✅
                 case "json_1":
-                    return process_json_1(file, job, backend_flag)
+                    return process_json_1(file, backend_flag, job)
                 # ✅
                 case "login101":
-                    return process_login(file, job, backend_flag)
+                    return process_login(file, backend_flag, job)
+                # ✅
+                case "simpleForm102":
+                    return process_simple_form(file, backend_flag, job)
 
                 # ✅ ADD CASES HERE
 
                 # ✅
                 case _:
-                    return {"success": False, "job": False, "backend_flag": backend_flag, "error": "Invalid job for JSON processing"}, 400
+                    return {"success": False, "backend_flag": backend_flag,"job": False, "message": "Invalid job for JSON processing"}, 400
         # 🌟
         case 'single_file':
             match job:
                 # ✅
                 case 'firstFile':
-                    return process_single_file(file, job, backend_flag)
+                    return process_single_file(file, backend_flag, job)
 
                 # ✅ ADD CASES HERE
 
                 # ✅
                 case _:
-                    return {"success": False, "job": False, "backend_flag": backend_flag, "error": "Invalid job for single file upload"}, 400
+                    return {"success": False, "backend_flag": backend_flag,"job": False, "message": "Invalid job for single file upload"}, 400
         # 🌟
         case 'single_file_and_json':
             match job:
                 # ✅
                 case 'testing_single_file_with_json':
-                    return process_file_and_json(file, data, job, backend_flag)
+                    return process_file_and_json(file, data, backend_flag, job)
 
                 # ✅ ADD CASES HERE
 
                 # ✅
                 case _:
-                    return {"success": False, "job": False, "backend_flag": backend_flag, "error": "Invalid job for single_file_and_json"}, 400
+                    return {"success": False, "backend_flag": backend_flag,"job": False, "message": "Invalid job for single_file_and_json"}, 400
         # 🌟
         case 'multiple_files':
             match job:
                 # ✅
                 case 'firstFolder':
-                    return process_multiple_files(file, job, backend_flag)
+                    return process_multiple_files(file, backend_flag, job)
 
                 # ✅ ADD CASES HERE
 
                 # ✅
                 case _:
-                    return {"success": False, "job": False, "backend_flag": backend_flag, "error": "Invalid job for multiple files"}, 400
+                    return {"success": False, "backend_flag": backend_flag,"job": False, "message": "Invalid job for multiple files"}, 400
         # 🌟
         case 'folder_and_json':
             match job:
                 # ✅
                 case 'testing_folder_with_json':
-                    return process_folder_and_json(file, data, job, backend_flag)
+                    return process_folder_and_json(file, data, backend_flag, job)
 
                 # ✅ ADD CASES HERE
 
                 # ✅
                 case _:
-                    return {"success": False, "job": False, "backend_flag": backend_flag, "error": "Invalid job for folder_and_json"}, 400
+                    return {"success": False, "backend_flag": backend_flag,"job": False, "message": "Invalid job for folder_and_json"}, 400
         # 🌟
         case _:
-            return {"success": False, "job": False, "backend_flag": False, "error": "Invalid backend flag"}, 400
+            return {"success": False, "backend_flag": False, "job": False, "message": "Invalid backend flag"}, 400
 
 
+
+# 🌟 DON'T TOUCH THIS
+# 🌟 YOU CAN COMMENT OUT PRINT STATEMENTS, but logic 
+# 🌟 is needed. You handle your logic for different  
+# 🌟 backend_flags and jobs in ajax_process
 @app.route('/ajax_receive', methods=['POST'])
 def ajax_receive():
     
@@ -122,19 +135,19 @@ def ajax_receive():
         try:
             data = request.get_json()
         except:
-            return jsonify({"error": "Invalid JSON format"}), 400
+            return jsonify({"success": False, "backend_flag": False, "job": False, "message": "Invalid JSON format"}), 400
 
     elif request.content_type.startswith('multipart/form-data'):
         # Extract JSON-like fields from FormData
         data = request.form  
     else:
-        return jsonify({"error": "Unsupported content type"}), 400
+        return jsonify({"success": False, "backend_flag": False, "job": False, "message": "Unsupported content type"}), 400
 
     # Condition 1: Ensure backend_flag is present
     if 'backend_flag' not in data:
-        return jsonify({"error": "Missing backend_flag"}), 400
+        return jsonify({"success": False, "backend_flag": False, "job": False, "message": "Missing backend_flag"}), 400
     elif 'job' not in data:
-        return jsonify({"error": "Missing job"}), 400
+        return jsonify({"success": False, "backend_flag": False, "job": False, "message": "Missing job"}), 400
 
     backend_flag = data['backend_flag']
     job = data['job']
@@ -152,12 +165,12 @@ def ajax_receive():
     elif backend_flag == 'single_file':
         print('single file')
         if not request.files or len(request.files) != 1 or 'singleFile' not in request.files:
-            return jsonify({"error": "Invalid upload: Only one file allowed"}), 400
+            return jsonify({"success": False, "backend_flag": backend_flag, "job": job, "message": "Invalid upload: Only one file allowed"}), 400
 
         file = request.files['singleFile']
 
         if file.filename == '':
-            return jsonify({"error": "No selected file"}), 400
+            return jsonify({"success": False, "backend_flag": backend_flag, "job": job, "message": "No selected file"}), 400
 
         # Forward file to processing function
         return jsonify(ajax_process(file, backend_flag, job))
@@ -165,12 +178,12 @@ def ajax_receive():
     elif backend_flag == 'single_file_and_json':
         print('single and json')
         if not request.files or len(request.files) != 1 or 'singleFileWithJson' not in request.files:
-            return jsonify({"error": "Invalid upload: Only one file allowed"}), 400
+            return jsonify({"success": False, "backend_flag": backend_flag, "job": job, "message": "Invalid upload: Only one file allowed"}), 400
 
         file = request.files['singleFileWithJson']
 
         if file.filename == '':
-            return jsonify({"error": "No selected file"}), 400
+            return jsonify({"success": False, "backend_flag": backend_flag, "job": job, "message": "No selected file"}), 400
 
         # Forward file to processing function
         return jsonify(ajax_process(file, backend_flag, job, data))
@@ -180,251 +193,21 @@ def ajax_receive():
         # Extract multiple files
         files = request.files.getlist('multiFiles')  
         if not files:
-            return jsonify({"error": "No valid files found in request"}), 400
+            return jsonify({"success": False, "backend_flag": backend_flag, "job": job, "message": "No valid files found in request"}), 400
         return jsonify(ajax_process(files, backend_flag, job))
 
     elif backend_flag == 'folder_and_json':
         print('folder and json')
         files = request.files.getlist('multiFiles')  # Extract multiple files
         if not files:
-            return jsonify({"error": "No valid files found in request"}), 400
+            return jsonify({"success": False, "backend_flag": backend_flag, "job": job, "message": "No valid files found in request"}), 400
         return jsonify(ajax_process(files, backend_flag, job, data))
 
     # Future conditions can be added here for different backend_flag values
-    return jsonify({"error": f"Invalid backend_flag value: {backend_flag}"}), 400
+    return jsonify({"success": False, "backend_flag": backend_flag, "job": job, "message": f"Invalid backend_flag value: {backend_flag}"}), 400
 
 
 
-"""
-def ajax_process(file, backend_flag, job, data=False):
-    print('ajax_process')
-
-    if (backend_flag == 'single_file'):
-
-        # Declare variable
-        UPLOAD_FOLDER = ''
-        save_path = ''
-
-        if (job == 'firstFile'):
-            ALLOWED_EXTENSIONS = {'.png', '.jpg', 'jpeg'}
-
-            UPLOAD_FOLDER = 'uploads'
-            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-            save_path = os.path.join(UPLOAD_FOLDER, file.filename)
-
-            file_extension = os.path.splitext(file.filename)[1].lower()
-            if file_extension not in ALLOWED_EXTENSIONS:
-                print('no')
-                return {"error": f"Invalid file type: {file.filename}"}, 400
-
-        # ADD FUTURE CHECKS HERE - CAN ADD AS MANY AS NEEDED
-        elif (job == ''):
-
-            pass
-
-        file.save(save_path)
-        return {"message": "File uploaded successfully", "filename": file.filename}
-
-    elif (backend_flag == 'multiple_files'):
-        print('multiple_files')
-        # Declare variable
-        UPLOAD_FOLDER = ''
-        saved_files = []
-
-        if (job == 'firstFolder'):
-
-            print('firstFolder')
-            ALLOWED_EXTENSIONS = {'.png', '.jpg', '.jpeg'}
-
-            UPLOAD_FOLDER = 'uploads'
-            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-            
-            for f in file:
-                file_extension = os.path.splitext(f.filename)[1].lower()
-                print('file_extension: ', file_extension)
-                if file_extension not in ALLOWED_EXTENSIONS:
-                    print('her')
-                    return {"error": f"Invalid file type: {file_extension}"}, 400
-
-        # ADD FUTURE CHECKS HERE - CAN ADD AS MANY AS NEEDED
-        elif (job == ''):
-
-            pass
-
-        else:
-            print('No valid job')
-            return {"error": "No valid job was given."}, 400
-
-                
-        for f in file:
-            if f.filename == '':
-                continue  # Skip empty file entries
-
-            # Preserve full folder structure using `webkitRelativePath`
-            relative_path = request.form.get(f"{f.filename}_path", f.filename)
-            save_path = os.path.join(UPLOAD_FOLDER, relative_path)
-            os.makedirs(os.path.dirname(save_path), exist_ok=True)
-
-            f.save(save_path)
-            saved_files.append(relative_path)
-
-        if not saved_files:
-            return {"error": "No valid files uploaded"}, 400
-
-        return {"message": "Files uploaded successfully", "filenames": saved_files}
-
-    elif backend_flag == 'json_only':
-
-        print("Processing JSON-only request")
-
-        if not isinstance(file, dict):
-            return {"error": "Invalid JSON data"}, 400  
-
-        if job == "json_1":
-            username = file.get("username", "").strip()
-            email = file.get("email", "").strip()
-            print('username: ', username)
-            print('email: ', email)
-
-            if not username or not email:
-                return {"error": "Missing required fields (username, email)."}, 400
-
-            return {"message": "JSON processed successfully", "username": username, "email": email}
-        
-        elif job == "login101":
-            print('log')
-            print('file: ', file)
-            # Can check against database, etc.
-            STORED_EMAIL = "test@test.com"
-            STORED_PASSWORD = "password"
-
-            password = file.get("password101", "").strip()
-            email = file.get("email101", "").strip()
-            
-            print('email: ', email)
-            print('password: ', password)
-
-            if not email or not password:
-                return {"success": False, "error": "Email and password required."}, 400
-
-            if email == STORED_EMAIL and password == STORED_PASSWORD:
-                return {"success": True, "job": job, "message": "Login successful!", "name": "Hello Summit..."}, 200
-            else:
-                return {"success": False, "job": 'login_failed', "error": "Invalid email or password."}, 401
-
-        # ADD FUTURE CHECKS HERE - CAN ADD AS MANY AS NEEDED
-        elif job == '':
-
-            pass  # Future jobs can be handled here
-
-        return {"error": "Invalid job for JSON processing"}, 400
-
-    elif backend_flag == 'single_file_and_json':
-
-        print("Processing single file and JSON request")
-
-        # Declare variable
-        UPLOAD_FOLDER = ''
-        save_path = ''
-
-        if (job == 'sfj'):
-
-            username = data.get("username", "").strip()
-            email = data.get("email", "").strip()
-
-            if not username or not email:
-                return {"error": "Missing required fields (username, email)."}, 400
-
-            if not re.match(email_pattern, email):
-                return {"error": "Invalid email format."}, 400
-
-            ALLOWED_EXTENSIONS = {'.png', '.jpg', '.jpeg'}
-            UPLOAD_FOLDER = 'uploads'
-            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-            file_extension = os.path.splitext(file.filename)[1].lower()
-            if file_extension not in ALLOWED_EXTENSIONS:
-                return {"error": f"Invalid file type: {file.filename}"}, 400  
-
-            save_path = os.path.join(UPLOAD_FOLDER, file.filename)
-            file.save(save_path)
-
-            #print('final_me: ', username)
-            #print('email: ', email)
-
-            return {
-                "message": "File and JSON processed successfully",
-                "filename": file.filename,
-                "username": username,
-                "email": email
-            }
-        
-        # ADD FUTURE CHECKS HERE - CAN ADD AS MANY AS NEEDED
-        elif (job == ''):
-
-            pass
-
-    elif (backend_flag == 'folder_and_json'):
-        print('folder_and_json')
-        # Declare variable
-        UPLOAD_FOLDER = ''
-        saved_files = []
-
-        if (job == 'testing_folder_with_json'):
-            username = data.get("username", "").strip()
-            email = data.get("email", "").strip()
-
-            if not username or not email:
-                return {"error": "Missing required fields (username, email)."}, 400
-
-            if not re.match(email_pattern, email):
-                return {"error": "Invalid email format."}, 400
-
-            ALLOWED_EXTENSIONS = {'.png', '.jpg', '.jpeg'}
-
-            UPLOAD_FOLDER = 'uploads'
-            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-            
-            for f in file:
-                file_extension = os.path.splitext(f.filename)[1].lower()
-                print('file_extension: ', file_extension)
-                if file_extension not in ALLOWED_EXTENSIONS:
-                    print('her')
-                    return {"error": f"Invalid file type: {file_extension}"}, 400 
-
-        # ADD FUTURE CHECKS HERE - CAN ADD AS MANY AS NEEDED
-        elif (job == ''):
-
-            pass
-
-        else:
-            print('No valid job')
-            return {"error": "No valid job was given."}, 400
-
-                
-        for f in file:
-            # Skip empty file entries
-            if f.filename == '':
-                continue  
-
-            # Preserve full folder structure using `webkitRelativePath`
-            relative_path = request.form.get(f"{f.filename}_path", f.filename)
-            save_path = os.path.join(UPLOAD_FOLDER, relative_path)
-              # Ensure subfolders exist
-            os.makedirs(os.path.dirname(save_path), exist_ok=True)
-
-            f.save(save_path)
-            saved_files.append(relative_path)
-
-        if not saved_files:
-            return {"error": "No valid files uploaded"}, 400
-
-        return {"message": "Files uploaded successfully", "filenames": saved_files}
-
-    else:
-        return {"message": "Ajax processing failed"}
-
-"""
 
 if __name__ == '__main__':
     app.run(debug=True, port=5078)

@@ -1,19 +1,40 @@
 
+from dotenv import load_dotenv
+from flask import request
 import mimetypes
 import requests
 import random
-from dotenv import load_dotenv
 import os
+import re
+
 
 load_dotenv()
+
+
+
+# 🌟 This file is where you will add all your code that does 
+# 🌟 actual work. Only handle your routing in app.py
+
+
+# $$$$$$$$$$$$$$$$$$$$$$$ OMNEXUS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ OMNEXUS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ OMNEXUS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ OMNEXUS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ OMNEXUS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ OMNEXUS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ OMNEXUS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ OMNEXUS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ OMNEXUS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+OMNEXUS_URL = os.getenv("OMNEXUS_URL")
+OMNEXUS_KEY = os.getenv("OMNEXUS_KEY")
+
 
 # Omnexus API Configuration
 # Receive your key at https://www.omnexus.ai
 # For any organizational needs, passwords, keys
 # Database interactions, etc. Use Omnexus API
-OMNEXUS_URL = os.getenv("OMNEXUS_URL")
-OMNEXUS_KEY = os.getenv("OMNEXUS_KEY")
-email_pattern = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
 
 
 def omnexus_request(namespace, endpoint, params=None, files=None, method="POST"):
@@ -55,7 +76,6 @@ def omnexus_request(namespace, endpoint, params=None, files=None, method="POST")
         return {"error": f"Request failed: {str(e)}"}
 
 
-
 # $$$$$$$$$$$$$$$$$$$$$$$ YOUR FUNCTIONS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$ YOUR FUNCTIONS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # $$$$$$$$$$$$$$$$$$$$$$$ YOUR FUNCTIONS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -67,27 +87,33 @@ def omnexus_request(namespace, endpoint, params=None, files=None, method="POST")
 # $$$$$$$$$$$$$$$$$$$$$$$ YOUR FUNCTIONS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
+# 🌟 Make sure all function responses are packaged in the following format:
+# 🌟 {"success": True/False, "backend_flag": backend_flag, "job": job, "message": "Your message", "additional_data": "Add as many as you need"}, 200/300/400/etc.
+# 🌟 This makes it easier to integrate with full communication pipeline.
 
 
-def handle_ping(job, backend_flag):
+email_pattern = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
+
+
+def handle_ping(backend_flag, job):
 
     # ✅ Here you can do stuff (access database, api calls, etc) to package json for return
     
-    return {"success": True, "job": job, "backend_flag": backend_flag, "message": "Pong!"}, 200
+    return {"success": True, "backend_flag": backend_flag, "job": job,  "message": "Pong!"}, 200
 
-def process_json_1(file, job, backend_flag):
+def process_json_1(file, backend_flag, job):
 
     username = file.get("username", "").strip()
     email = file.get("email", "").strip()
 
     if not username or not email:
-        return {"success": False, "job": job, "backend_flag": backend_flag, "error": "Missing required fields (username, email)."}, 400
+        return {"success": False, "backend_flag": backend_flag, "job": job,  "message": "Missing required fields (username, email)."}, 400
 
     # ✅ Here you can do stuff with your json
 
-    return {"success": True, "job": job, "backend_flag": backend_flag, "message": "JSON processed successfully", "username": username, "email": email}
+    return {"success": True, "backend_flag": backend_flag, "job": job,  "message": "JSON processed successfully", "username": username, "email": email}, 200
 
-def process_login(file, job, backend_flag):
+def process_login(file, backend_flag, job):
 
     STORED_EMAIL = "test@test.com"
     STORED_PASSWORD = "password"
@@ -96,17 +122,33 @@ def process_login(file, job, backend_flag):
     email = file.get("email101", "").strip()
 
     if not email or not password:
-        return {"success": False, "job": job, "backend_flag": backend_flag, "error": "Email and password required."}, 400
+        return {"success": False, "backend_flag": backend_flag, "job": job,  "message": "Email and password required."}, 400
 
     # ✅ Here you can do stuff with your json
 
     if email == STORED_EMAIL and password == STORED_PASSWORD:
-        return {"success": True, "job": job, "backend_flag": backend_flag, "message": "Login successful!", "name": "Hello Summit..."}, 200
+        return {"success": True, "backend_flag": backend_flag, "job": job,  "message": "Login successful!", "name": "Hello Summit..."}, 200
     else:
-        return {"success": False, "job": job, "backend_flag": backend_flag, "error": "Invalid email or password."}, 401
+        return {"success": False, "backend_flag": backend_flag, "job": job,  "message": "Invalid email or password."}, 401
 
 
-def process_single_file(file, job, backend_flag):
+def process_simple_form(file, backend_flag, job):
+
+    the_text = file.get("text102", "").strip()
+    email = file.get("email102", "").strip()
+    the_number = file.get("number102", "").strip()
+    the_textarea = file.get("textarea102", "").strip()
+    the_select = file.get("select102", "").strip()
+    the_radio = file.get("radio102", "").strip()
+    the_checkbox = file.get("checkbox102", "").strip()
+    print(the_text)
+
+    return {"success": True, "backend_flag": backend_flag, "job": job,  "message": "Simple Form Submission successful!", "name": the_text}, 200
+
+
+
+
+def process_single_file(file, backend_flag, job):
 
     UPLOAD_FOLDER = 'uploads'
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -116,16 +158,16 @@ def process_single_file(file, job, backend_flag):
 
     file_extension = os.path.splitext(file.filename)[1].lower()
     if file_extension not in ALLOWED_EXTENSIONS:
-        return {"success": False, "job": job, "backend_flag": backend_flag, "error": f"Invalid file type: {file.filename}"}, 400
+        return {"success": False, "backend_flag": backend_flag, "job": job,  "message": f"Invalid file type: {file.filename}"}, 400
 
     file.save(save_path)
 
     # ✅ Here you can do stuff with the uploaded file
 
-    return {"success": True, "job": job, "backend_flag": backend_flag, "message": "File uploaded successfully", "filename": file.filename}
+    return {"success": True, "backend_flag": backend_flag, "job": job,  "message": "File uploaded successfully", "filename": file.filename}, 200
 
 
-def process_multiple_files(files, job, backend_flag):
+def process_multiple_files(files, backend_flag, job):
 
     UPLOAD_FOLDER = 'uploads'
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -136,7 +178,7 @@ def process_multiple_files(files, job, backend_flag):
     for f in files:
         file_extension = os.path.splitext(f.filename)[1].lower()
         if file_extension not in ALLOWED_EXTENSIONS:
-            return {"success": False, "job": job, "backend_flag": backend_flag, "error": f"Invalid file type: {file_extension}"}, 400
+            return {"success": False, "backend_flag": backend_flag, "job": job,  "message": f"Invalid file type: {file_extension}"}, 400
 
     for f in files:
         if f.filename == '':
@@ -150,71 +192,68 @@ def process_multiple_files(files, job, backend_flag):
         saved_files.append(relative_path)
 
     if not saved_files:
-        return {"success": False, "job": job, "backend_flag": backend_flag, "error": "No valid files uploaded"}, 400
+        return {"success": False, "backend_flag": backend_flag, "job": job,  "message": "No valid files uploaded"}, 400
 
     # ✅ Here you can do stuff with the uploaded folder
 
-    return {"success": True, "job": job, "backend_flag": backend_flag, "message": "Files uploaded successfully", "filenames": saved_files}
+    return {"success": True, "backend_flag": backend_flag, "job": job,  "message": "Files uploaded successfully", "filenames": saved_files}, 200
 
 
-def process_file_and_json(file, data, job, backend_flag):
+def process_file_and_json(file, data, backend_flag, job):
 
     username = data.get("username", "").strip()
     email = data.get("email", "").strip()
 
     if not username or not email:
-        return {"success": False, "job": job, "backend_flag": backend_flag, "error": "Missing required fields (username, email)."}, 400
+        return {"success": False, "backend_flag": backend_flag, "job": job,  "message": "Missing required fields (username, email)."}, 400
 
     if not re.match(email_pattern, email):
-        return {"success": False, "job": job, "backend_flag": backend_flag, "error": "Invalid email format."}, 400
+        return {"success": False, "backend_flag": backend_flag, "job": job,  "message": "Invalid email format."}, 400
 
     the_response_file = process_single_file(file)
 
     # ✅ Here you can do stuff with the uploaded file and json
 
     if the_response_file["success"] == True:
-        return {"success": True, "job": job, "backend_flag": backend_flag, "message": "Completed single file and json processing..."}
+        return {"success": True, "backend_flag": backend_flag, "job": job,  "message": "Completed single file and json processing..."}, 200
     else:
-        return {"success": False, "job": job, "backend_flag": backend_flag, "error": "Single file and json processing Failed..."}
+        return {"success": False, "backend_flag": backend_flag, "job": job,  "message": "Single file and json processing Failed..."}, 400
 
-def process_folder_and_json(files, data, job, backend_flag):
+def process_folder_and_json(files, data, backend_flag, job):
     
     username = data.get("username", "").strip()
     email = data.get("email", "").strip()
 
     if not username or not email:
-        return {"success": False, "job": job, "backend_flag": backend_flag, "error": "Missing required fields (username, email)."}, 400
+        return {"success": False, "backend_flag": backend_flag, "job": job,  "message": "Missing required fields (username, email)."}, 400
 
     if not re.match(email_pattern, email):
-        return {"success": False, "job": job, "backend_flag": backend_flag, "error": "Invalid email format."}, 400
+        return {"success": False, "backend_flag": backend_flag, "job": job,  "message": "Invalid email format."}, 400
 
     the_response_folder = process_multiple_files(files)
 
     # ✅ Here you can do stuff with the uploaded folder and json
 
     if the_response_folder["success"] == True:
-        return {"success": True, "job": job, "backend_flag": backend_flag, "message": "Completed single file and json processing..."}
+        return {"success": True, "backend_flag": backend_flag, "job": job,  "message": "Completed single file and json processing..."}, 200
     else:
-        return {"success": False, "job": job, "backend_flag": backend_flag, "error": "Single file and json processing Failed..."}
+        return {"success": False, "backend_flag": backend_flag, "job": job,  "message": "Single file and json processing Failed..."}, 400
 
 
-
-
-
-
-# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT FUNCTIONS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT FUNCTIONS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT FUNCTIONS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT FUNCTIONS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT FUNCTIONS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT FUNCTIONS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT FUNCTIONS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT FUNCTIONS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$ SUPPORT FUNCTIONS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
 # Build supporting functions here
 
+# Choose a random integer between two points
 def choose_random_integer(start, end):
     return random.randint(start, end)
 
