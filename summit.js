@@ -1631,6 +1631,7 @@ function simpleForm102(centered_block, elements, containerBorderColor = "#3498db
 
     // Create the form container
     const container = form(centered_block, { id: "form_box102" });
+    
 
     elements.forEach(({ type, options = [], title, ...attributes }) => {
         let baseId = type + "102";
@@ -1828,6 +1829,10 @@ function simpleForm102(centered_block, elements, containerBorderColor = "#3498db
 
     }
 
+    container.addEventListener("submit", function(event) {
+        event.preventDefault();
+    })
+
     // Helper function to darken a hex color (used for focus effect)
     function darkenColor(hex, percent) {
         let num = parseInt(hex.slice(1), 16),
@@ -1953,6 +1958,7 @@ function submitSimpleForm102() {
     console.log("Submitting Form with IDs:", formElements);
 
     let { data, responseType } = ajax_package(formElements, 'json_only', 'simpleForm102');
+
     ajax_request(data, responseType);
     
     return false; // Prevent default form submission.
