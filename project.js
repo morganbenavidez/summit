@@ -66,8 +66,8 @@ function loadPage(page) {
     switch (page) {
 
         case 'home':
-            titleContent = 'Omnexus - All roads lead here';
-            metaContent = 'Connecting the world with Ai';
+            titleContent = 'Summit';
+            metaContent = 'Helping you Summit your next Flask Project';
             loadHomePage(titleContent, metaContent);
             break;
         case 'documentation':
