@@ -15,9 +15,11 @@ const fileSelections = {};
 // Validate email format using regex
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-
-
-
+// CREATE YOUR KEY AND STORE PUBLIC in global public_key_app
+// Select v3 recaptcha key from Google
+// https://www.google.com/recaptcha/admin/create
+var public_key_app;
+public_key_app = 'GOOGLE_RECAPTCHA_PUBLIC_KEY';
 
 
 // $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -38,8 +40,6 @@ function testJsonOnly() {
     let { data, responseType } = ajax_package(formElements, 'json_only', 'json_1');
     ajax_request(data, responseType);
 }
-
-
 
 
 // $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -490,6 +490,7 @@ function ajax_package(formElements, mode, job) {
 }
 
 
+
 // All ajax requests are made through this function
 function ajax_request(data, responseType, callback = () => {}) {
 
@@ -516,6 +517,52 @@ function ajax_request(data, responseType, callback = () => {}) {
     });
 }
 
+
+//  $$$$ USE THIS VERSION IF YOU WANT TO USE
+//  $$$$ GOOGLE RECAPTCHA
+// CREATE YOUR KEY AND STORE PUBLIC in global public_key_app
+// Select v3 recaptcha key from Google
+// https://www.google.com/recaptcha/admin/create
+/*
+// All AJAX requests go through this function
+function ajax_request(data, responseType, callback = () => {}) {
+    let endpoint = '/ajax_receive';
+    let method = 'POST';
+
+    // Execute reCAPTCHA v3 before sending the request
+    grecaptcha.ready(function() {
+        grecaptcha.execute(public_key_app, {action: 'submit'}).then(function(token) {
+            // Attach the reCAPTCHA token to the data object
+            if (!(data instanceof FormData)) {
+                data = { ...data, token: token };
+            } else {
+                data.append("token", token);
+            }
+
+            // Proceed with AJAX request after getting reCAPTCHA token
+            $.ajax({
+                type: method || "POST",
+                url: endpoint,
+                data: data instanceof FormData ? data : JSON.stringify(data),
+                contentType: data instanceof FormData ? false : "application/json",
+                processData: !(data instanceof FormData),
+                dataType: "json",
+                success: function(response) {
+                    callback(response);
+                    ajax_handle(responseType, response);
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error:", status, error);
+                    callback({ success: false, error: "Request failed: " + error });
+                }
+            });
+        }).catch(function(error) {
+            console.error("reCAPTCHA failed:", error);
+            callback({ success: false, error: "reCAPTCHA failed" });
+        });
+    });
+}
+*/
 
 
 // Creates any element of your choice

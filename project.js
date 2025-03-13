@@ -175,10 +175,10 @@ function loadDashboardPage(titleContent, metaContent) {
 
    
     // AJAX PRACTICE
-
+    
     // Simple Post (GET)
-    let { data, responseType } = ajax_package([], 'simple_post', 'ping');
-    ajax_request(data, responseType);
+    //let { data, responseType } = ajax_package([], 'simple_post', 'ping');
+    //ajax_request(data, responseType);
 
 
     // JSON Only

@@ -29,7 +29,10 @@ load_dotenv()
 
 OMNEXUS_URL = os.getenv("OMNEXUS_URL")
 OMNEXUS_KEY = os.getenv("OMNEXUS_KEY")
-
+# CREATE YOUR KEY AND STORE PUBLIC in global public_key_app
+# Select v3 recaptcha key from Google
+# https://www.google.com/recaptcha/admin/create
+RECAPTCHA_SECRET_KEY = os.getenv('RECAPTCHA_SECRET_KEY')
 
 # Omnexus API Configuration
 # Receive your key at https://www.omnexus.ai
@@ -74,6 +77,19 @@ def omnexus_request(namespace, endpoint, params=None, files=None, method="POST")
     
     except requests.exceptions.RequestException as e:
         return {"error": f"Request failed: {str(e)}"}
+
+
+def verify_recaptcha(token):
+    # Verify reCAPTCHA token with Google
+    print('verify_recaptcha')
+    recaptcha_url = "https://www.google.com/recaptcha/api/siteverify"
+    response = requests.post(recaptcha_url, data={
+        "secret": RECAPTCHA_SECRET_KEY,
+        "response": token
+    })
+    result = response.json()
+    print('verify_recaptcha: ', result.get("success"))
+    return result.get("success", False)
 
 
 # $$$$$$$$$$$$$$$$$$$$$$$ YOUR FUNCTIONS $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$

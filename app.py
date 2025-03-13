@@ -1,6 +1,6 @@
 from flask import Flask, render_template, send_from_directory, request, jsonify
 from flask import redirect, url_for
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 from summit import *
 import re
 import os
@@ -143,7 +143,20 @@ def ajax_receive():
     else:
         return jsonify({"success": False, "backend_flag": False, "job": False, "message": "Unsupported content type"}), 400
 
-    # Condition 1: Ensure backend_flag is present
+
+
+    # $$$$ UNCOMMENT IF YOU WANT TO USE GOOGLE RECAPTCHA
+    # Condition 1: Ensure token is present
+    #token = data.get("token")
+    #print("token: ", token)
+
+    #if not token or not verify_recaptcha(token):
+    #    return jsonify({"success": False, "backend_flag": False, "job": False, "message": "reCAPTCHA validation failed"}), 400
+    # $$$$ UNCOMMENT IF YOU DON'T WANT TO USE GOOGLE RECAPTCHA
+
+
+
+    # Condition 2: Ensure backend_flag is present
     if 'backend_flag' not in data:
         return jsonify({"success": False, "backend_flag": False, "job": False, "message": "Missing backend_flag"}), 400
     elif 'job' not in data:
