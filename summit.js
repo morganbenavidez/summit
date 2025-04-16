@@ -1,39 +1,78 @@
-
 // $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 // $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ GLOBAL VARIABLES   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
 
 // Create an object to store selected files globally
 const fileSelections = {};
 // Validate email format using regex
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// CREATE YOUR KEY AND STORE PUBLIC in global public_key_app
-// Select v3 recaptcha key from Google
-// https://www.google.com/recaptcha/admin/create
-var public_key_app;
-public_key_app = 'GOOGLE_RECAPTCHA_PUBLIC_KEY';
-
-
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
-
+const keywordColors = {
+    // Existing mappings
+    "function": "#0074D9",
+    "let": "#FF4136",
+    "switch": "#2ECC40",
+    "case": "#2ECC40",
+    "break": "#FF851B",
+    "default": "#B10DC9",
+    "return": "#85144B",
+    "const": "#FFDC00",
+    
+    // Added mappings
+    "var": "#FFA500",
+    "if": "#FA8072",
+    "else": "#FA8072",
+    "for": "#2E86C1",
+    "while": "#2E86C1",
+    "do": "#2E86C1",
+    "class": "#F1C40F",
+    "extends": "#F1C40F",
+    "super": "#F1C40F",
+    "constructor": "#F1C40F",
+    "import": "#9B59B6",
+    "export": "#9B59B6",
+    "from": "#9B59B6",
+    "as": "#9B59B6",
+    "try": "#CD5C5C",
+    "catch": "#CD5C5C",
+    "finally": "#CD5C5C",
+    "throw": "#CD5C5C",
+    "new": "#FF1493",
+    "this": "#48C9B0",
+    "delete": "#EC7063",
+    "typeof": "#8E44AD",
+    "instanceof": "#8E44AD",
+    "in": "#FF33A8",
+    "of": "#FF33A8",
+    "null": "#607D8B",
+    "true": "#607D8B",
+    "false": "#607D8B",
+    "undefined": "#607D8B",
+    "async": "#FFB6C1",
+    "await": "#FFB6C1",
+    "document": "#2E8B57",
+    "console.log": "#FF4500",
+    "git": "#F1502F",
+    "clone": "#F39C12",
+    "mv": "#8E44AD",
+    "cd": "#16A085",
+    "rm": "#C0392B",
+    "bash": "#9B59B6"
+};
+// Function to wrap keywords in a span with the mapped color
+function highlightCode(code) {
+    Object.keys(keywordColors).forEach(keyword => {
+        // Use word boundaries to match whole words only
+        const re = new RegExp("\\b" + keyword + "\\b", "g");
+        code = code.replace(re, `<span style="color: ${keywordColors[keyword]}">${keyword}</span>`);
+    });
+    return code;
+}
+function highlightAllSnippets() { // we just need to call this function at the end of every page where the code snippets are there
+    document.querySelectorAll("pre code").forEach(codeBlock => {
+        const rawCode = codeBlock.innerText;
+        codeBlock.innerHTML = highlightCode(rawCode);
+    });
+}
 function testJsonOnly() {
     // list of the ids of elements you want to include
     let formElements = ["username", "email"];
@@ -42,6 +81,12 @@ function testJsonOnly() {
 }
 
 
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$$$$ YOUR FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+
+
 // $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 // $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 // $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -53,550 +98,27 @@ function testJsonOnly() {
 // $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 // $$$$$ CUSTOMIZABLE FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-
-function ajax_validate(data, job, mode) {
-
-    switch (mode) {
-
-        //🌟 
-        case 'simple_post':
-
-            // Handle simple_post (LIKE A GET REQUEST)
-            switch (job) {
-
-                // ✅
-                case 'ping':
-                    console.log('simple_post testing');
-                    return;
-
-                // ✅ ADD MORE CASES TO HANDLE HERE
-
-                // ✅
-                default:
-                    console.log('simple_post default');
-                    return;
-            }
-
-        //🌟 
-        case 'json_only':
-
-            // Handle submitting json only (no files or folders)
-            switch (job) {
-                
-                // ✅
-                case 'json_1':
-                    let email = data["email"]
-                    if (!emailPattern.test(email)) {
-                        alert("Invalid email format. Please enter a valid email.");
-                        return;
-                    }
-                    return;
-
-                // ✅ ADD MORE CASES TO HANDLE HERE
-                
-                // ✅
-                default:
-          // ✅ ADD MORE CASES TO HANDLE HERE          console.log('json_only default');
-                    return;
-            }
-
-        //🌟 
-        case 'single_file':
-
-            // Handle submitting only a single file
-            switch (job) {
-
-                // ✅
-                case 'testing':
-                    console.log('single_file testing');
-                    return;
-
-                // ✅ ADD MORE CASES TO HANDLE HERE
-
-                // ✅
-                default:
-                    console.log('single_file default');
-                    return;
-            }
-
-        //🌟 
-        case 'single_file_and_json':
-
-            // Handle submitting json data and a single file
-            switch (job) {
-
-                // ✅
-                case 'testing_single_file_with_json':
-                    let email = data.get("email");
-                    if (!emailPattern.test(email)) {
-                        alert("Invalid email format. Please enter a valid email.");
-                        return;
-                    }
-                    return;
-                
-                // ✅ ADD MORE CASES TO HANDLE HERE
-
-                // ✅
-                default:
-                    console.log('single_file_and_json default');
-                    return;
-            }
-
-
-        //🌟 
-        case 'folder_submission':
-
-            // Handle submitting a folder (many files - will preserve folder structure)
-            switch (job) {
-
-                // ✅
-                case 'testing':
-                    console.log('folder_submission testing');
-                    return;
-
-                // ✅ ADD MORE CASES TO HANDLE HERE
-
-                // ✅
-                default:
-                    console.log('folder_submission default');
-                    return;
-            }
-
-        //🌟 
-        case 'folder_and_json':
-
-            // Handle submitting a folder (many files - will preserve folder structure) and json
-            switch (job) {
-
-                // ✅
-                case 'testing_folder_with_json':
-
-                    let email = data.get("email");
-                    if (!emailPattern.test(email)) {
-                        alert("Invalid email format. Please enter a valid email.");
-                        return;
-                    }
-                    return;
-
-                // ✅ ADD MORE CASES TO HANDLE HERE
-                
-                // ✅
-                default:
-                    console.log('folder_and_json default');
-                    return;
-            }
-        
-        //🌟
-        default:
-            console.log('Not a recognized mode');
-            return;
-
-    }
-    
-}
-
-
-
-//🌟 Handle incoming requests 
-function ajax_handle(responseType, response) {
-
-    // Check if response is an array and extract the first object
-    if (Array.isArray(response)) {
-        status_code = response[1];
-        response = response[0];
-    }
-    console.log('status_code: ', status_code);
-    // Ensure job exists in the response
-    if (!response.job) {
-        console.warn("No job specified in response:", response);
-        return;
-    }
-    if (!response.backend_flag) {
-        console.warn("No backend_flag specified in response:", response);
-        return;
-    }
-
-    let mode = response.backend_flag;
-    let job = response.job;
-
-    console.log('ajax_handle (backend_flag): ', mode);
-    console.log('ajax_handle (job): ', job);
-
-    switch (mode) {
-
-        //🌟 
-        case 'simple_post':
-
-            // Handle simple_post (LIKE A GET REQUEST)
-            switch (job) {
-
-                // ✅
-                case 'ping':
-                    console.log('ping handle testing');
-                    console.log(response.message);
-                    return;
-
-                // ✅ ADD MORE CASES TO HANDLE HERE
-
-                // ✅
-                default:
-                    console.log('simple_post handle default');
-                    return;
-            }
-
-        //🌟 
-        case 'json_only':
-
-            // Handle submitting json only (no files or folders)
-            switch (job) {
-                
-                // ✅
-                case 'login101':
-                    if (response.success) {
-                        console.log("Login Successful:", response.message);
-                        localStorage.setItem("fname", response.name);
-                        navigate('dashboard');
-                        return;
-                    } else {
-                        let passwordInput = document.getElementById('password101');
-                        if (passwordInput) passwordInput.value = "";
-                        console.error("Login Failed:", response.message);
-                        return;
-                    }
-                // ✅
-                case 'json_1':
-                    if (response.success) {
-                        console.log('Username: ', response.username);
-                        return;
-                    }
-                // ✅
-                case 'simpleForm102':
-                    if (response.success) {
-                        console.log('Name: ', response.name);
-                        return;
-                    }
-
-                // ✅ ADD MORE CASES TO HANDLE HERE
-                
-                // ✅
-                default:
-                    console.log('json_only handle default');
-                    return;
-            }
-
-        //🌟 
-        case 'single_file':
-
-            // Handle submitting only a single file
-            switch (job) {
-
-                // ✅ ADD MORE CASES TO HANDLE HERE
-
-                // ✅
-                default:
-                    console.log('single_file handle default');
-                    return;
-            }
-
-        //🌟 
-        case 'single_file_and_json':
-
-            // Handle submitting json data and a single file
-            switch (job) {
-                
-                // ✅ ADD MORE CASES TO HANDLE HERE
-
-                // ✅
-                default:
-                    console.log('single_file_and_json handle default');
-                    return;
-            }
-
-
-        //🌟 
-        case 'folder_submission':
-
-            // Handle submitting a folder (many files - will preserve folder structure)
-            switch (job) {
-
-                // ✅ ADD MORE CASES TO HANDLE HERE
-
-                // ✅
-                default:
-                    console.log('folder_submission handle default');
-                    return;
-            }
-
-        //🌟 
-        case 'folder_and_json':
-
-            // Handle submitting a folder (many files - will preserve folder structure) and json
-            switch (job) {
-
-                // ✅ ADD MORE CASES TO HANDLE HERE
-                
-                // ✅
-                default:
-                    console.log('folder_and_json handle default');
-                    return;
-            }
-        
-        //🌟
-        default:
-            console.log('Not a recognized mode - handle error');
-            return;
-
-    }
-    
-}
 
 
 
 // $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 // $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ PRE-BUILT FUNCTIONS   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
-
-
-
-// Package your ajax calls with this
-function ajax_package(formElements, mode, job) {
-
-    console.log('ajax_package (backend_flag): ', mode);
-    console.log('ajax_package (job): ', job)
-
-    if (mode === 'simple_post') {
-
-        let jsonData = {
-            backend_flag: "simple_post",
-            job: job
-        };
-
-        return { data: jsonData, responseType: "json" };
-        
-    }
-
-    if (mode === 'json_only') {
-        
-        let jsonData = {
-            backend_flag: "json_only",
-            job: job
-        };
-
-        formElements.forEach(id => {
-            let the_input = document.getElementById(id);
-            if (the_input) {
-                jsonData[id] = the_input.value.trim();
-            }
-        });
-
-        // Add Validation
-        ajax_validate(jsonData, job, mode);
-        
-        return { data: jsonData, responseType: "json" };
-        
-    } else if (mode === 'single_file') {
-        let formData = new FormData();
-        formData.append("backend_flag", 'single_file');
-        formData.append("job", job);
-        formElements.forEach(id => {
-            let input = document.getElementById(id);
-            if (input && input.files.length > 0) {
-                formData.append(id, input.files[0]);
-            }
-        });
-        
-        // Add Validation
-        ajax_validate(formData, job, mode);
-
-        return { data: formData, responseType: "json" };
-
-    } else if (mode === 'single_file_and_json') {
-
-        let formData = new FormData();
-        formData.append("backend_flag", 'single_file_and_json');
-        formData.append("job", job);
-
-        formElements.forEach(id => {
-            //console.log('id: ', id);
-            let input = document.getElementById(id);
-            if (!input) return;
-
-            if (input.type === "file" && input.files.length > 0) {
-                formData.append(id, input.files[0]);
-            } else if (input.tagName === "SELECT") {
-                //console.log('select');
-                //console.log(input.value);
-                formData.append(id, input.value);
-            } else {
-                formData.append(id, input.value.trim());
-            }
-        });
-
-        //console.log("FORM DATA");
-        //console.log(formData);
-        // Add Validation
-        ajax_validate(formData, job, mode);
-
-        return { data: formData, responseType: "json" };
-
-    } else if (mode === 'folder_submission') {
-        var inputId = formElements[0];
-        let formData = new FormData();
-        formData.append("backend_flag", 'multiple_files');
-        formData.append("job", job);
-       
-        fileSelections[inputId].forEach(file => {
-            formData.append("multiFiles", file, file.webkitRelativePath);
-        });
-
-        // Add Validation
-        ajax_validate(formData, job, mode);
-
-        return { data: formData, responseType: "json" };
-
-    } else if (mode === 'folder_and_json') {
-        var inputId = formElements[0];
-        let formData = new FormData();
-        formData.append("backend_flag", 'folder_and_json');
-        formData.append("job", job);
-
-        formElements.forEach(id => {
-            let input = document.getElementById(id);
-            if (!input) return;
-
-            if (input.type !== "file" && input.tagName !== "SELECT") {
-                formData.append(id, input.value.trim());
-            } else if (input.type !== "file" && input.tagName === "SELECT") {
-                formData.append(id, input.value);
-            }
-        });
-
-        
-        fileSelections[inputId].forEach(file => {
-            formData.append("multiFiles", file, file.webkitRelativePath);
-        });
-
-        // Add Validation
-        ajax_validate(formData, job, mode);
-
-        return { data: formData, responseType: "json" };
-    }
-}
-
-
-
-// All ajax requests are made through this function
-function ajax_request(data, responseType, callback = () => {}) {
-
-    let endpoint = '/ajax_receive'
-    let method = 'POST'
-
-    $.ajax({
-        type: method || "POST",
-        url: endpoint,
-        data: data instanceof FormData ? data : JSON.stringify(data),
-        contentType: data instanceof FormData ? false : "application/json",
-        processData: !(data instanceof FormData),
-        dataType: "json",
-        success: function(response) {
-            //console.log('responseType: ', responseType);
-            //console.log('response: ', response);
-            callback(response);
-            ajax_handle(responseType, response);
-        },
-        error: function(xhr, status, error) {
-            console.error("AJAX Error:", status, error);
-            callback({ success: false, error: "Request failed: " + error });
-        }
-    });
-}
-
-
-//  $$$$ USE THIS VERSION IF YOU WANT TO USE
-//  $$$$ GOOGLE RECAPTCHA
-// CREATE YOUR KEY AND STORE PUBLIC in global public_key_app
-// Select v3 recaptcha key from Google
-// https://www.google.com/recaptcha/admin/create
-/*
-// All AJAX requests go through this function
-function ajax_request(data, responseType, callback = () => {}) {
-    let endpoint = '/ajax_receive';
-    let method = 'POST';
-
-    // Execute reCAPTCHA v3 before sending the request
-    grecaptcha.ready(function() {
-        grecaptcha.execute(public_key_app, {action: 'submit'}).then(function(token) {
-            // Attach the reCAPTCHA token to the data object
-            if (!(data instanceof FormData)) {
-                data = { ...data, token: token };
-            } else {
-                data.append("token", token);
-            }
-
-            // Proceed with AJAX request after getting reCAPTCHA token
-            $.ajax({
-                type: method || "POST",
-                url: endpoint,
-                data: data instanceof FormData ? data : JSON.stringify(data),
-                contentType: data instanceof FormData ? false : "application/json",
-                processData: !(data instanceof FormData),
-                dataType: "json",
-                success: function(response) {
-                    callback(response);
-                    ajax_handle(responseType, response);
-                },
-                error: function(xhr, status, error) {
-                    console.error("AJAX Error:", status, error);
-                    callback({ success: false, error: "Request failed: " + error });
-                }
-            });
-        }).catch(function(error) {
-            console.error("reCAPTCHA failed:", error);
-            callback({ success: false, error: "reCAPTCHA failed" });
-        });
-    });
-}
-*/
-
 
 // Creates any element of your choice
-
 function createAndAppendElement(type, attributes, parentElement) {
-
     const element = document.createElement(type);
-
     for (const key in attributes) {
-
         if (key === 'innerHTML') {
-
             element.innerHTML = attributes[key];
-
         } else if (key === 'dataSiteKey') {
-
             element.setAttribute('data-sitekey', attributes[key]);
-
         } else {
-            
             element.setAttribute(key, attributes[key]);
-
         }
-
     }
-
     parentElement.appendChild(element);
-
     return element;
-
 }
-
-
-
 // Function to append html elements stored as a string to a specified parent element
 function appendHtmlToParent(htmlString, parentElement) {
     // Check if the parent exists in the DOM
@@ -608,16 +130,13 @@ function appendHtmlToParent(htmlString, parentElement) {
         console.error('The parent element does not exist.');
     }    
 }
-
 // Sets the entire centered_block to an empty string
 function clearCenteredBlock(component) {
     if (component) {
         component.innerHTML = ''
     }
 }
-
 function clearDynamicHeadElements() {
-
     const elements = document.head.querySelectorAll('*');
     elements.forEach(element => {
         // Check if the element has the data-static attribute set to true
@@ -626,398 +145,288 @@ function clearDynamicHeadElements() {
         }
     });
 }
-
-
 function titleAndMeta(headBlock, titleContent, metaContent) {
-
     // Head data
-
     createAndAppendElement('title', {
-
         innerHTML: titleContent,
         id: 'titleElement'
-
     }, headBlock);
-
     createAndAppendElement('meta', {
-
         name: 'description',
         id: 'metaElementMain',
         content: metaContent
-
     }, headBlock);
-
     return headBlock
-
 }
-
-function startOffAPage(centeredBlock, titleContent, metaContent) {
-
-    clearCenteredBlock(centeredBlock);
-    
+function startOffAPage(titleContent, metaContent) {
+    const outerBlock = document.getElementById('outer_block')
+    clearCenteredBlock(outerBlock);
+    div(outerBlock, {id: 'centered_block'});
     // Clear head except for data-static = 'true'
     clearDynamicHeadElements();
-
     let headBlock = document.getElementById('index_head');
-
     // Adds title and meta to head
     titleAndMeta(headBlock, titleContent, metaContent);
-
 }
-
-
-
-// $$$$$$$$$$$$$$$$$$$$  SIMPLE ELEMENTS         $$$$$$$$$$$$$$$$$$$$$$$$$
-
-
-
 // Helper functions to avoid repetition
 function row(container, attributes = {}) {
     attributes.class = `row ${attributes.class || ''}`;
     return createAndAppendElement('div', attributes, container);
 }
-
 function col(parent, attributes = {}) {
     attributes.class = `col ${attributes.class || ''}`;
     return createAndAppendElement('div', attributes, parent);
 }
-
 function h1(parent, attributes = {}) {
     return createAndAppendElement('h1', attributes, parent)
 }
-
 function h2(parent, attributes = {}) {
     return createAndAppendElement('h2', attributes, parent)
 }
-
 function h3(parent, attributes = {}) {
     return createAndAppendElement('h3', attributes, parent)
 }
-
 function h4(parent, attributes = {}) {
     return createAndAppendElement('h4', attributes, parent)
 }
-
 function h5(parent, attributes = {}) {
     return createAndAppendElement('h5', attributes, parent)
 }
-
 function h6(parent, attributes = {}) {
     return createAndAppendElement('h6', attributes, parent)
 }
-
 function a(parent, attributes = {}) {
     return createAndAppendElement('a', attributes, parent)
 }
-
 function section(parent, attributes = {}) {
     return createAndAppendElement('section', attributes, parent)
 }
-
 function img(parent, attributes = {}) {
     return createAndAppendElement('img', attributes, parent);
 }
-
 function p(parent, attributes = {}) {
     return createAndAppendElement('p', attributes, parent);
 }
-
 function form(parent, attributes = {}) {
     return createAndAppendElement('form', attributes, parent);
 }
-
 function div(parent, attributes = {}) {
     return createAndAppendElement('div', attributes, parent);
 }
-
 function input(parent, attributes = {}) {
     return createAndAppendElement('input', attributes, parent);
 }
-
 function label(parent, attributes = {}) {
     return createAndAppendElement('label', attributes, parent);
 }
-
 function canvas(parent, attributes = {}) {
     return createAndAppendElement('canvas', attributes, parent);
 }
-
 function button(parent, attributes = {}) {
     return createAndAppendElement('button', attributes, parent);
 }
-
 function audio(parent, attributes = {}) {
     return createAndAppendElement('audio', attributes, parent)
 }
-
 function source(parent, attributes = {}) {
     return createAndAppendElement('source', attributes, parent)
 }
-
 function ul(parent, attributes = {}) {
     return createAndAppendElement('ul', attributes, parent);
 }
-
 function ol(parent, attributes = {}) {
     return createAndAppendElement('ol', attributes, parent);
 }
-
 function li(parent, attributes = {}) {
     return createAndAppendElement('li', attributes, parent);
 }
-
 function table(parent, attributes = {}) {
     return createAndAppendElement('table', attributes, parent);
 }
-
 function tr(parent, attributes = {}) {
     return createAndAppendElement('tr', attributes, parent);
 }
-
 function td(parent, attributes = {}) {
     return createAndAppendElement('td', attributes, parent);
 }
-
 function th(parent, attributes = {}) {
     return createAndAppendElement('th', attributes, parent);
 }
-
 function tbody(parent, attributes = {}) {
     return createAndAppendElement('tbody', attributes, parent);
 }
-
 function thead(parent, attributes = {}) {
     return createAndAppendElement('thead', attributes, parent);
 }
-
 function tfoot(parent, attributes = {}) {
     return createAndAppendElement('tfoot', attributes, parent);
 }
-
 function span(parent, attributes = {}) {
     return createAndAppendElement('span', attributes, parent);
 }
-
 function nav(parent, attributes = {}) {
     return createAndAppendElement('nav', attributes, parent);
 }
-
 function header(parent, attributes = {}) {
     return createAndAppendElement('header', attributes, parent);
 }
-
 function footer(parent, attributes = {}) {
     return createAndAppendElement('footer', attributes, parent);
 }
-
 function article(parent, attributes = {}) {
     return createAndAppendElement('article', attributes, parent);
 }
-
 function aside(parent, attributes = {}) {
     return createAndAppendElement('aside', attributes, parent);
 }
-
 function iframe(parent, attributes = {}) {
     return createAndAppendElement('iframe', attributes, parent);
 }
-
 function video(parent, attributes = {}) {
     return createAndAppendElement('video', attributes, parent);
 }
-
 function svg(parent, attributes = {}) {
     return createAndAppendElement('svg', attributes, parent);
 }
-
 function path(parent, attributes = {}) {
     return createAndAppendElement('path', attributes, parent);
 }
-
 function textarea(parent, attributes = {}) {
     return createAndAppendElement('textarea', attributes, parent);
 }
-
 function select(parent, attributes = {}) {
     return createAndAppendElement('select', attributes, parent);
 }
-
 function option(parent, attributes = {}) {
     return createAndAppendElement('option', attributes, parent);
 }
-
 function strong(parent, attributes = {}) {
     return createAndAppendElement('strong', attributes, parent);
 }
-
 function em(parent, attributes = {}) {
     return createAndAppendElement('em', attributes, parent);
 }
-
 function br(parent) {
     return createAndAppendElement('br', {}, parent);
 }
-
 function hr(parent, attributes = {}) {
     return createAndAppendElement('hr', attributes, parent);
 }
-
 function map(parent, attributes = {}) {
     return createAndAppendElement('map', attributes, parent);
 }
-
 function area(parent, attributes = {}) {
     return createAndAppendElement('area', attributes, parent);
 }
-
 function link(parent, attributes = {}) {
     return createAndAppendElement('link', attributes, parent);
 }
-
 function meta(parent, attributes = {}) {
     return createAndAppendElement('meta', attributes, parent);
 }
-
 function title(parent, attributes = {}) {
     return createAndAppendElement('title', attributes, parent);
 }
-
 function style(parent, attributes = {}) {
     return createAndAppendElement('style', attributes, parent);
 }
-
 function base(parent, attributes = {}) {
     return createAndAppendElement('base', attributes, parent);
 }
-
 function head(parent, attributes = {}) {
     return createAndAppendElement('head', attributes, parent);
 }
-
 function body(parent, attributes = {}) {
     return createAndAppendElement('body', attributes, parent);
 }
-
 function main(parent, attributes = {}) {
     return createAndAppendElement('main', attributes, parent);
 }
-
 function b(parent, attributes = {}) {
     return createAndAppendElement('b', attributes, parent);
 }
-
 function i(parent, attributes = {}) {
     return createAndAppendElement('i', attributes, parent);
 }
-
 function small(parent, attributes = {}) {
     return createAndAppendElement('small', attributes, parent);
 }
-
 function cite(parent, attributes = {}) {
     return createAndAppendElement('cite', attributes, parent);
 }
-
 function q(parent, attributes = {}) {
     return createAndAppendElement('q', attributes, parent);
 }
-
 function code(parent, attributes = {}) {
     return createAndAppendElement('code', attributes, parent);
 }
-
 function pre(parent, attributes = {}) {
     return createAndAppendElement('pre', attributes, parent);
 }
-
 function blockquote(parent, attributes = {}) {
     return createAndAppendElement('blockquote', attributes, parent);
 }
-
 function address(parent, attributes = {}) {
     return createAndAppendElement('address', attributes, parent);
 }
-
 function figure(parent, attributes = {}) {
     return createAndAppendElement('figure', attributes, parent);
 }
-
 function figcaption(parent, attributes = {}) {
     return createAndAppendElement('figcaption', attributes, parent);
 }
-
 function mark(parent, attributes = {}) {
     return createAndAppendElement('mark', attributes, parent);
 }
-
 function time(parent, attributes = {}) {
     return createAndAppendElement('time', attributes, parent);
 }
-
 function ins(parent, attributes = {}) {
     return createAndAppendElement('ins', attributes, parent);
 }
-
 function del(parent, attributes = {}) {
     return createAndAppendElement('del', attributes, parent);
 }
-
 function kbd(parent, attributes = {}) {
     return createAndAppendElement('kbd', attributes, parent);
 }
-
 function samp(parent, attributes = {}) {
     return createAndAppendElement('samp', attributes, parent);
 }
-
 function varElement(parent, attributes = {}) {
     return createAndAppendElement('var', attributes, parent);
 }
-
 function sup(parent, attributes = {}) {
     return createAndAppendElement('sup', attributes, parent);
 }
-
 function sub(parent, attributes = {}) {
     return createAndAppendElement('sub', attributes, parent);
 }
-
 function progress(parent, attributes = {}) {
     return createAndAppendElement('progress', attributes, parent);
 }
-
 function meter(parent, attributes = {}) {
     return createAndAppendElement('meter', attributes, parent);
 }
-
 function output(parent, attributes = {}) {
     return createAndAppendElement('output', attributes, parent);
 }
-
 function details(parent, attributes = {}) {
     return createAndAppendElement('details', attributes, parent);
 }
-
 function summary(parent, attributes = {}) {
     return createAndAppendElement('summary', attributes, parent);
 }
-
 function datalist(parent, attributes = {}) {
     return createAndAppendElement('datalist', attributes, parent);
 }
-
 function fieldset(parent, attributes = {}) {
     return createAndAppendElement('fieldset', attributes, parent);
 }
-
 function legend(parent, attributes = {}) {
     return createAndAppendElement('legend', attributes, parent);
 }
-
-
-
 // $$$$$$$$$$$$$$$$$$$$  COOKIES        $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
 function getCookie(name) {
     let cookieArray = document.cookie.split(';');
     for (let i = 0; i < cookieArray.length; i++) {
@@ -1028,12 +437,8 @@ function getCookie(name) {
     }
     return undefined;
 }
-
-
 // $$$$$$$$$$$$$$$$$$$$  SUPPORT FUNCTIONS         $$$$$$$$$$$$$$$$$$$$$$$$$
-
-
-
+// $$$$$$$$$$$$$$$$$$$$  SUPPORT FUNCTIONS         $$$$$$$$$$$$$$$$$$$$$$$$$
 // Pass in milliseconds - like time.sleep in python but with milliseconds
 function sleep(milliseconds) {
     const date = Date.now();
@@ -1042,59 +447,39 @@ function sleep(milliseconds) {
       currentDate = Date.now();
     } while (currentDate - date < milliseconds);
 }
-
 function replaceWhitespaceWithUnderscores(inputString) {
     return inputString.replace(/\s+/g, '_');
 }
-
-
 function removeBaseUrl(fullUrl, baseUrl) {
     // Remove the base URL from the full URL
     return fullUrl.replace(baseUrl, '');
 }
-
 function containsUppercase(str) {
     return /[A-Z]/.test(str);
 }
-
 function containsLowercase(str) {
     return /[a-z]/.test(str);
 }
-
 function containsNumbers(str) {
     return /\d/.test(str);
 }
-
 function containsSpecialCharacters(str) {
     return /[@$!%*?&)(,]/.test(str);
 }
-
 function containsWhiteSpace(str) {
     return str.includes(' ');
 }
-
-
-
-
-
-
-
 // $$$$$$$$$$$$$$$$$$$$  MORE COMPLEX ELEMENT STRUCTURES         $$$$$$$$$$$$$$$$$$$$$$$$$
-
-
-
+// $$$$$$$$$$$$$$$$$$$$  MORE COMPLEX ELEMENT STRUCTURES         $$$$$$$$$$$$$$$$$$$$$$$$$
 function createRowsAndColumns(numRows, numCols, signifier, mainContainer) {
-
     for (let i = 1; i <= numRows; i++) {
         // Create row with a dynamic ID
         let row = createAndAppendElement('div', {
             class: 'row mb-3',
             id: `${signifier}Row${i}`
         }, mainContainer);
-
         // Retrieve the number of columns for the current row
         let columnsCount = numCols[i - 1];
-
         // Create the specified number of columns for this row
         for (let j = 1; j <= columnsCount; j++) {
             createAndAppendElement('div', {
@@ -1104,22 +489,16 @@ function createRowsAndColumns(numRows, numCols, signifier, mainContainer) {
         }
     }
 }
-
-
 // Function to create and append a select element with options
-
 function createSelectWithOptions(parentElement, attributes, options, firstOption, startingValue="", fonts="") {
-
     const select = createAndAppendElement('select', attributes, parentElement);
-
-    createAndAppendElement('option', {
-        value: startingValue,
-        selected: true,
-        innerHTML: firstOption
-    }, select);
-    
+    option(select, {value: startingValue, selected: true, innerHTML: firstOption});
+    //createAndAppendElement('option', {
+    //    value: startingValue,
+    //    selected: true,
+    //    innerHTML: firstOption
+    //}, select);
     let fontsToLoad = [];
-
     if (fonts === "fonts") {
         Object.keys(options).forEach(key => {
             createAndAppendElement('option', {
@@ -1129,7 +508,6 @@ function createSelectWithOptions(parentElement, attributes, options, firstOption
             }, select);
             // Add the font to the list of fonts to load
             fontsToLoad.push(key);
-            
         })
     } else {
         Object.keys(options).forEach(key => {
@@ -1139,8 +517,6 @@ function createSelectWithOptions(parentElement, attributes, options, firstOption
             }, select);
         })
     }
-    
-
     if (fonts === "fonts") {
         // Load the fonts using WebFont Loader
         WebFont.load({
@@ -1149,22 +525,15 @@ function createSelectWithOptions(parentElement, attributes, options, firstOption
             }
         });
     }
-    
-
 }
-
-
 // Function to create and append checkboxes with labels
 // Function to create and append checkboxes with labels (each on a new line)
-// Function to create and append checkboxes with labels
 function createCheckboxesWithOptions(attributes, options, parentElement) {
     const container = document.createElement('div');
     container.classList.add("checkbox-container");
-
     options.forEach(option => {
         const itemWrapper = document.createElement('div'); // Wrap each checkbox-label pair
         itemWrapper.classList.add("checkbox-item"); // Ensures alignment
-
         const checkbox = createAndAppendElement('input', {
             type: 'checkbox',
             id: option.id,
@@ -1172,24 +541,19 @@ function createCheckboxesWithOptions(attributes, options, parentElement) {
             class: 'check_class',
             value: option.value
         }, itemWrapper);
-
         createAndAppendElement('label', {
             for: checkbox.id,
             innerHTML: option.label
         }, itemWrapper);
-
         container.appendChild(itemWrapper);
     });
-
     parentElement.appendChild(container);
     return container;
 }
-
 // Function to create and append radio buttons with labels
 function createRadioButtonsWithOptions(attributes, options, parentElement) {
     const container = document.createElement('div');
     container.classList.add("radio-container");
-
     options.forEach(option => {
         const itemWrapper = document.createElement('div'); // Wrap each radio-label pair
         itemWrapper.classList.add("radio-item"); // Ensures alignment
@@ -1200,45 +564,29 @@ function createRadioButtonsWithOptions(attributes, options, parentElement) {
             class: 'radio_class',
             value: option.value
         }, itemWrapper);
-
         createAndAppendElement('label', {
             for: radioButton.id,
             innerHTML: option.label
         }, itemWrapper);
-
         container.appendChild(itemWrapper);
     });
-
     parentElement.appendChild(container);
     return container;
 }
 
-
-
-
 function createFileInput(parent, id, allowedTypes, mode, job, formElements=false) {
-
     fileSelections[id] = [];
-
     if (mode === 'single_file') {
-
         var fileInput = input(parent, {
             type: "file",
             id: id,
             accept: allowedTypes
         });
-
-
         var fileListContainer = div(parent, { id: "fileList" });
-
-        //let fileLabel = label(parent, {id: `${id}_label`, innerHTML: 'No file chosen'});
-
         fileInput.addEventListener("change", (event) => {
             handleFileSelection(event, id, fileListContainer, allowedTypes, mode);
         });
-
         var submitBtn = button(parent, { innerHTML: "Submit", id: 'fileSubmitButton'});
-
         submitBtn.addEventListener("click", function() {
             if (fileSelections[id].length === 0) {
                 alert("No files selected.");
@@ -1247,11 +595,7 @@ function createFileInput(parent, id, allowedTypes, mode, job, formElements=false
             let { data, responseType } = ajax_package([id], 'single_file', job);
             ajax_request("/ajax_receive", "POST", data, responseType);
         });
-
-
-
     } else if (mode === 'folder_submission') {
-
         var folderInput = input(parent, {
             type: "file",
             id: id,
@@ -1259,16 +603,12 @@ function createFileInput(parent, id, allowedTypes, mode, job, formElements=false
             webkitdirectory: "true",
             accept: allowedTypes
         });
-
         // File List Display
         var fileListContainer = div(parent, { id: "fileList" });
-
         folderInput.addEventListener("change", (event) => {
             handleFileSelection(event, id, fileListContainer, allowedTypes, mode);
         });
-
         var submitBtn = button(parent, { innerHTML: "Submit", id: 'folderSubmitButton' });
-
         submitBtn.addEventListener("click", function() {
             if (fileSelections[id].length === 0) {
                 alert("No files selected.");
@@ -1277,7 +617,6 @@ function createFileInput(parent, id, allowedTypes, mode, job, formElements=false
             let { data, responseType } = ajax_package([id], 'folder_submission', job);
             ajax_request("/ajax_receive", "POST", data, responseType);
         });
-
     } else if (mode === 'single_file_and_json') {
         var fileInput = input(parent, {
             type: "file",
@@ -1287,17 +626,12 @@ function createFileInput(parent, id, allowedTypes, mode, job, formElements=false
         console.log('here');
         // File List Display
         var fileListContainer = div(parent, { id: "fileList" });
-
         //let fileLabel = label(parent, {id: `${id}_label`, innerHTML: 'No file chosen'});
-
         fileInput.addEventListener("change", (event) => {
             handleFileSelection(event, id, fileListContainer, allowedTypes, 'single_file');
         });
-
         var submitBtn = button(parent, { innerHTML: "Submit", id: 'fileSubmitButton'});
-
         this_list_of_elements = [id];
-
         // Iterate over formElements and add them to the list
         if (formElements) {
             formElements.forEach(el => {
@@ -1305,7 +639,6 @@ function createFileInput(parent, id, allowedTypes, mode, job, formElements=false
                 this_list_of_elements.push(el);
             });
         }
-
         submitBtn.addEventListener("click", function() {
             if (fileSelections[id].length === 0) {
                 alert("No files selected.");
@@ -1324,25 +657,19 @@ function createFileInput(parent, id, allowedTypes, mode, job, formElements=false
             webkitdirectory: "true",
             accept: allowedTypes
         });
-
         // File List Display
         var fileListContainer = div(parent, { id: "fileList" });
-
         folderInput.addEventListener("change", (event) => {
             handleFileSelection(event, id, fileListContainer, allowedTypes, 'folder_submission');
         });
-
         var submitBtn = button(parent, { innerHTML: "Submit", id: 'folderSubmitButton' });
-
         this_list_of_elements = [id];
-
         // Iterate over formElements and add them to the list
         if (formElements) {
             formElements.forEach(el => {
                 this_list_of_elements.push(el);
             });
         }
-
         submitBtn.addEventListener("click", function() {
             if (fileSelections[id].length === 0) {
                 alert("No files selected.");
@@ -1352,12 +679,10 @@ function createFileInput(parent, id, allowedTypes, mode, job, formElements=false
             ajax_request("/ajax_receive", "POST", data, responseType);
         });
     }
-    
 }
 
 
 function handleFileSelection(event, inputId, fileListContainer, allowedTypes, mode) {
-
     if (mode === 'single_file') {
         let thisInput = document.getElementById(inputId);
         if (thisInput.files.length !== 1) {
@@ -1367,10 +692,8 @@ function handleFileSelection(event, inputId, fileListContainer, allowedTypes, mo
             fileSelections[inputId] = [];
             return;
         }
-
         let file = thisInput.files[0];
         let fileType = `.${file.name.split(".").pop().toLowerCase()}`;
-
         if (!allowedTypes.includes(fileType)) {
             alert("Invalid file type.");
             thisInput.value = "";
@@ -1378,31 +701,24 @@ function handleFileSelection(event, inputId, fileListContainer, allowedTypes, mo
             fileSelections[inputId] = [];
             return;
         }
-
         fileSelections[inputId] = [file];
         fileListContainer.innerHTML = `<li>${file.name}</li>`;
-
     } else if (mode === 'folder_submission'){
-
         let files = Array.from(event.target.files);
         if (files.length === 0) {
             fileListContainer.innerHTML = "<li>No files selected.</li>";
             return;
         }
-
         let invalidFiles = [];
         let validFiles = [];
-
         files.forEach(file => {
             let fileType = `.${file.name.split('.').pop().toLowerCase()}`;
-
             if (!allowedTypes.includes(fileType)) {
                 invalidFiles.push(file.name);
             } else {
                 validFiles.push(file);
             }
         });
-
         if (invalidFiles.length > 0) {
             alert(`Invalid file(s) detected:\n${invalidFiles.join("\n")}\n\nPlease select only allowed file types.`);
             event.target.value = "";
@@ -1410,25 +726,18 @@ function handleFileSelection(event, inputId, fileListContainer, allowedTypes, mo
             fileSelections[inputId] = [];
             return;
         }
-
-        
         fileSelections[inputId] = validFiles;
         fileListContainer.innerHTML = "";
-
         validFiles.forEach(file => {
             let listItem = document.createElement("li");
             listItem.textContent = file.webkitRelativePath || file.name;
             fileListContainer.appendChild(listItem);
         });
     } 
-    
 }
 
 
 // $$$$$$$$$$$$$$$$$$  IMAGE CAROUSELS AND CONTAINERS   $$$$$$$$$$$$$$$$$$$$$$$$$$
-
-
-
 
 
 // Function to create and append an image carousel
@@ -1662,32 +971,17 @@ function singleImageContainer(sourceDivId, sourceClass, source, centeredBlock) {
 
 // $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
 // $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$$$$$$$$$$$$$$  STRUCTURED ELEMENTS WITH CSS   $$$$$$$$$$$$$$$$$$$$$$$$$$
-
-
 function simpleForm102(centered_block, elements, containerBorderColor = "#3498db", inputBorderColor = "#ccc", submitButtonColor="#007bff", submitHover="#ccc") {
-
     let counts = {}; // Track the count of each type to ensure unique IDs
     let formElementIds = []; // Store IDs of all form elements (except submit button)
-
     // Create the form container
     const container = form(centered_block, { id: "form_box102" });
-    
-
     elements.forEach(({ type, options = [], title, ...attributes }) => {
         let baseId = type + "102";
         counts[type] = (counts[type] || 0) + 1;
         let finalId = counts[type] > 1 ? `${baseId}_${counts[type]}` : baseId;
         attributes.id = finalId;
-
         let wrapper;
-
         if (type === "select") {
             wrapper = div(container, { class: "input-wrapper" });
             createSelectWithOptions(wrapper, attributes, options, "Choose an option");
@@ -1730,11 +1024,8 @@ function simpleForm102(centered_block, elements, containerBorderColor = "#3498db
             formElementIds.push(finalId);
         }
     });
-
     // Store IDs globally for submitSimpleForm102 to use
     window.formElementIds = formElementIds;
-
-
     // Apply styles after form is built
     function styleFormElements(formContainer, containerBorderColor, inputBorderColor) {
         Object.assign(formContainer.style, {
@@ -1751,7 +1042,6 @@ function simpleForm102(centered_block, elements, containerBorderColor = "#3498db
             boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
             gap: "15px"
         });
-
         // Debugging: Show background colors to verify structure
         const groups = formContainer.querySelectorAll(".radio-group, .checkbox-group");
         groups.forEach(group => {
@@ -1764,7 +1054,6 @@ function simpleForm102(centered_block, elements, containerBorderColor = "#3498db
                 borderRadius: "5px",
                 width: "100%"
             });
-
             // Left-align only the container inside
             const innerContainer = group.querySelector(".radio-container, .checkbox-container");
             if (innerContainer) {
@@ -1777,7 +1066,6 @@ function simpleForm102(centered_block, elements, containerBorderColor = "#3498db
                 });
             }
         });
-
         // Style group titles (centered inside group containers)
         const groupTitles = formContainer.querySelectorAll(".group-title");
         groupTitles.forEach(title => {
@@ -1790,7 +1078,6 @@ function simpleForm102(centered_block, elements, containerBorderColor = "#3498db
                 textAlign: "center" // Keeps title centered inside container
             });
         });
-
         // Style radio and checkbox items (inputs + labels)
         const inputItems = formContainer.querySelectorAll(".radio-item, .checkbox-item");
         inputItems.forEach(item => {
@@ -1802,7 +1089,6 @@ function simpleForm102(centered_block, elements, containerBorderColor = "#3498db
                 gap: "5px", // Small, consistent gap between input and label
                 width: "100%"
             });
-
             // Ensure input stays fully left
             const input = item.querySelector("input");
             if (input) {
@@ -1813,7 +1099,6 @@ function simpleForm102(centered_block, elements, containerBorderColor = "#3498db
                     flexShrink: "0" // Prevents input from resizing
                 });
             }
-
             // Ensure labels align properly with their inputs
             const label = item.querySelector("label");
             if (label) {
@@ -1825,7 +1110,6 @@ function simpleForm102(centered_block, elements, containerBorderColor = "#3498db
                 });
             }
         });
-
         // Style individual form elements (EXCLUDE radio & checkbox inputs)
         const inputs = formContainer.querySelectorAll("input:not([type='radio']):not([type='checkbox']), select, textarea");
         inputs.forEach(input => {
@@ -1838,16 +1122,13 @@ function simpleForm102(centered_block, elements, containerBorderColor = "#3498db
                 maxWidth: "280px",
                 transition: "0.3s"
             });
-
             input.addEventListener("focus", () => {
                 input.style.borderColor = darkenColor(inputBorderColor, 10);
             });
-
             input.addEventListener("blur", () => {
                 input.style.borderColor = inputBorderColor;
             });
         });
-
         // Style Submit Button
         const buttons = formContainer.querySelectorAll("input[type='submit']");
         buttons.forEach(button => {
@@ -1864,22 +1145,17 @@ function simpleForm102(centered_block, elements, containerBorderColor = "#3498db
                 maxWidth: "100%",
                 transition: "0.3s"
             });
-
             button.addEventListener("mouseover", () => {
                 button.style.backgroundColor = submitHover; // Darker on hover
             });
-
             button.addEventListener("mouseout", () => {
                 button.style.backgroundColor = submitButtonColor;
             });
         });
-
     }
-
     container.addEventListener("submit", function(event) {
         event.preventDefault();
     })
-
     // Helper function to darken a hex color (used for focus effect)
     function darkenColor(hex, percent) {
         let num = parseInt(hex.slice(1), 16),
@@ -1889,30 +1165,9 @@ function simpleForm102(centered_block, elements, containerBorderColor = "#3498db
             b = (num & 0x0000FF) - amt;
         return `#${(0x1000000 + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
     }
-
     // Apply styling after elements are built
     styleFormElements(container, containerBorderColor, inputBorderColor);
 }
-
-
-/*
-
-Login form without Create Account option
-
-*/
-
-/* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
-/*
-function login_box101(centeredBlock) {
-
-    const login_box = div(centeredBlock, {id: "login_box101"});
-    h1(login_box, {innerHTML: "Login"});
-    const login_form = form(login_box, {id: 'login_form101', onsubmit: 'return submitLoginForm101();'});
-    input(login_form, {id: 'email101', name: 'email101', type: 'email', placeholder: 'Email'});
-    input(login_form, {id: 'password101', name: 'password101', type: 'password', placeholder: 'Password'});
-    input(login_form, {type: 'submit', value: 'Log In'});
-}
-*/
 
 function login_box101(centeredBlock) {
     // Create & inject styles (inside the function itself)
@@ -1972,11 +1227,9 @@ function login_box101(centeredBlock) {
         `;
         document.head.appendChild(style);
     }
-
     // Create the login box
     const login_box = div(centeredBlock, { id: "login_box101" });
     h1(login_box, { innerHTML: "Login" });
-
     // Create the form
     const login_form = form(login_box, { id: 'login_form101', onsubmit: 'return submitLoginForm101();' });
     input(login_form, { id: 'email101', name: 'email101', type: 'email', placeholder: 'Email' });
@@ -1984,42 +1237,22 @@ function login_box101(centeredBlock) {
     input(login_form, { type: 'submit', value: 'Log In' });
 }
 
-
-
 function submitLoginForm101() {
-
     // Pass ids for form values.
     let formElements = ["email101", "password101"];
     let { data, responseType } = ajax_package(formElements, 'json_only', 'login101');
+    console.log('hey');
+    sleep(500);
     ajax_request(data, responseType);
-    
     return false; // Prevent default form submission.
 }
 
 function submitSimpleForm102() {
-
     // Retrieve stored IDs
     let formElements = window.formElementIds || [];
-
     // Ensure we are passing the correct elements
     console.log("Submitting Form with IDs:", formElements);
-
     let { data, responseType } = ajax_package(formElements, 'json_only', 'simpleForm102');
-
     ajax_request(data, responseType);
-    
     return false; // Prevent default form submission.
 }
-
-
-function testJsonOnly() {
-    // list of the ids of elements you want to include
-    let formElements = ["username", "email"];
-    let { data, responseType } = ajax_package(formElements, 'json_only', 'json_1');
-    ajax_request(data, responseType);
-}
-
-
-/* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
-
-
