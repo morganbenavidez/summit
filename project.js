@@ -374,21 +374,51 @@ function submitLoginForm101() {
         h3(card, { class: "doc_h3", innerHTML: "1 Gather Input" });
         p(card, {
             class: "doc_p",
-            innerHTML: `Summit gathers and validates your input with <code>ajax_package()</code>.`
+            innerHTML: `Gather your inputs and send to ajax_package() for validation and packaging your data: <code>ajax_package(formElements, mode, job)</code>.`
         });
         const packBlock = p(card, {});
         code(packBlock, {
             innerHTML: highlightCode(`let formElements = ["username", "email"]
 let { data, responseType } = ajax_package(formElements, "json_only", "register_user")`)
         });
+
+
+        h3(card, { class: "doc_h3", innerHTML: "2 Validate Your Data" });
+        p(card, {
+            class: "doc_p",
+            innerHTML: `This function lets you validate user inputs before anything is sent to the backend: <code>ajax_validate(data, job, mode)</code>ajax_validate() runs automatically when you call:<code>ajax_package(formElements, mode, job)</code>`
+        });
+        ul(card, {});
+        li(card, { innerHTML: `<strong>mode:</strong> Tells you the structure of the data (JSON, file, etc)` });
+        li(card, { innerHTML: `<strong>job:</strong> Tells you what logic the request is trying to trigger` });
+        li(card, { innerHTML: `<strong>data:</strong> Contains the actual input (either JSON object or FormData)` });
+
+        li(card, { innerHTML: `Use <strong>switch(mode)</strong> and <strong>switch(job)</strong> to write validation logic scoped to your task.` });
+
+        const validateBlock = p(card, {});
+        code(validateBlock, {
+            innerHTML: highlightCode(`case 'json_only':
+        switch (job) {
+            case 'json_1':
+                let email = data["email"]
+                if (!emailPattern.test(email)) {
+                    alert("Invalid email format")
+                    return
+                }
+                return
+        }`)
+        });
+
+        li(card, { innerHTML: `Return early with alerts or errors to prevent bad requests.` });
+
     
-        h3(card, { class: "doc_h3", innerHTML: "2 Send the Request" });
+        h3(card, { class: "doc_h3", innerHTML: "3 Send the Request" });
         const sendBlock = p(card, {});
         code(sendBlock, {
             innerHTML: highlightCode(`ajax_request(data, responseType)`)
         });
     
-        h3(card, { class: "doc_h3", innerHTML: "3 Backend Entry Point" });
+        h3(card, { class: "doc_h3", innerHTML: "4 Backend Entry Point" });
         const routeBlock = p(card, {});
         code(routeBlock, {
             innerHTML: highlightCode(`@app.route('/ajax_receive', methods=['POST'])
@@ -400,7 +430,7 @@ def ajax_receive():
     return jsonify(ajax_process(file, backend_flag, job, data))`)
         });
     
-        h3(card, { class: "doc_h3", innerHTML: "4 Backend Dispatcher" });
+        h3(card, { class: "doc_h3", innerHTML: "5 Backend Dispatcher" });
         const dispatchBlock = p(card, {});
         code(dispatchBlock, {
             innerHTML: highlightCode(`def ajax_process(file, backend_flag, job, data=False):
@@ -414,7 +444,7 @@ def ajax_receive():
     return { "success": False, "message": "Invalid request" }, 400`)
         });
     
-        h3(card, { class: "doc_h3", innerHTML: "5 Define Your Backend Jobs" });
+        h3(card, { class: "doc_h3", innerHTML: "6 Define Your Backend Jobs" });
         
         const fn1 = p(card, {});
         code(fn1, {
@@ -432,7 +462,7 @@ def ajax_receive():
     return {"success": True, "backend_flag": backend_flag, "job": job, "message": "JSON processed successfully", "username": username, "email": email}, 200`)
         });
     
-        h3(card, { class: "doc_h3", innerHTML: "6 Handle the Response" });
+        h3(card, { class: "doc_h3", innerHTML: "7 Handle the Response" });
         const handleBlock = p(card, {});
         code(handleBlock, {
             innerHTML: highlightCode(`function ajax_handle(responseType, response) {
