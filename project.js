@@ -34,17 +34,8 @@ function updatePageState(page) {
 
 
 
-
 // $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 // $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-// $$$$$ YOU SHOULDN'T EDIT ANYTHING ABOVE THIS LINE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
 
 
 // $$$$$ Add new cases, titleContents, metaContents, and load functions for each page you create   $$$$$$$$
@@ -88,91 +79,6 @@ function loadPage(page) {
     updatePageState(page)
 
 }
-
-
-function buildNavBar(which_type) {
-
-    // Create sticky side nav (desktop) or burger-toggle nav (mobile)
-    const sideNav = div(document.getElementById("outer_block"), { class: "side-nav" });
-  
-    const logo = div(sideNav, { class: "side-logo" });
-    img(logo, {
-      src: "/static/images/summit.png",
-      alt: "Summit Logo",
-      class: "side-logo-img"
-    });
-    h2(logo, { innerHTML: "Summit", class: "side-brand" });
-    
-    if (which_type === 'main') {
-        const linkContainer = div(sideNav, { class: "side-links" });
-        [
-            "Home",
-            "Login",
-            "Documentation"
-        ].forEach((name) => {
-        const link = a(linkContainer, {
-            href: `javascript:navigate('${name.toLowerCase().replace(/\s+/g, "-")}')`,
-            class: "side-link"
-        });
-        link.textContent = name;
-        });
-    }
-    else if (which_type === 'dashboard') {
-        const linkContainer = div(sideNav, { class: "side-links" });
-        [
-            "Home",
-            "Documentation"
-        ].forEach((name) => {
-        const link = a(linkContainer, {
-            href: `javascript:navigate('${name.toLowerCase().replace(/\s+/g, "-")}')`,
-            class: "side-link"
-        });
-        link.textContent = name;
-        });
-    }
-    else if (which_type === 'docs') {
-        const linkContainer = div(sideNav, { class: "side-links" });
-        [
-            "Home",
-            "Login",
-            "Documentation"
-        ].forEach((name) => {
-        const link = a(linkContainer, {
-            href: `javascript:navigate('${name.toLowerCase().replace(/\s+/g, "-")}')`,
-            class: "side-link"
-        });
-        link.textContent = name;
-        });
-        a(linkContainer, { href: "#At_the_start",       innerHTML: "Start",    class: "side-link" });
-        a(linkContainer, { href: "#page-initialization", innerHTML: "Init",     class: "side-link" });
-        a(linkContainer, { href: "#page-loading",        innerHTML: "Loading",  class: "side-link" });
-        a(linkContainer, { href: "#loadPage-function",   innerHTML: "LoadPage", class: "side-link" });
-        a(linkContainer, { href: "#ajax_package",        innerHTML: "AjaxPkg",  class: "side-link" });
-        a(linkContainer, { href: "#ajax_request",        innerHTML: "AjaxReq",  class: "side-link" });
-        a(linkContainer, { href: "#helper_functions",    innerHTML: "Helpers",  class: "side-link" });
-    }
-    
-    const burger = div(document.getElementById("outer_block"), { class: "burger" });
-    burger.innerHTML = "☰";
-    burger.onclick = () => {
-      sideNav.classList.toggle("active");
-    };
-
-}
-
-
-function buildFooter() {
-    // Footer
-    const footer = div(document.getElementById("outer_block"), { class: "footer-centered" });
-    h2(footer, { innerHTML: "Summit", class: "footer-brand" });
-    p(footer, { innerHTML: "Getting you to the Summit.", class: "footer-tagline" });
-  
-    p(footer, {
-      innerHTML: "&copy; 2025 Summit. All rights reserved.",
-      class: "footer-copy"
-    });
-}
-
 
 // Home Page Entry Point
 function loadHomePage(titleContent, metaContent) {
@@ -237,655 +143,343 @@ function loadHomePage(titleContent, metaContent) {
 
 
 function loadDocumentationPage(titleContent, metaContent) {
-    
-    
     startOffAPage(titleContent, metaContent);
-    
+    const centeredBlockMain = document.getElementById("centered_block");
+    const wrapper = div(centeredBlockMain, { class: "landing-wrapper doc_wrapper" });
 
-    const centeredBlockMain = document.getElementById('centered_block');
-    const centeredBlock = div(centeredBlockMain, {id: 'centered_block_docs'});
     buildNavBar('docs');
-    // Main Wrapper
-    //const centeredBlock = div(centeredBlock1, { class: "landing-wrapper" });
 
-    
-    h1(centeredBlock, { innerHTML: "Summit.js Documentation" });
-    p(centeredBlock, { innerHTML: "Summit.js is a framework designed to streamline web application development by simplifying navigation, state management, and UI structure." });
-    hr(centeredBlock, { innerHTML: "" });  // <-- HR inserted
-    // Getting start section - Basic 
-    h2(centeredBlock, { innerHTML: "Getting started with summit.js", id: "getting_started" });
-    
+    standardTopOfPage2(wrapper, "Summit Documentation", "")
 
-    // Intro Paragraph
-    p(centeredBlock, { innerHTML: "Before using Summit.js in your project, follow these steps:" });
-        
-    // Step 1: Download Summit.js
-    h3(centeredBlock, { innerHTML: "Step 1: Download Summit.js" });
-    p(centeredBlock, { innerHTML: "Download the Summit.js file from the official repositor and run the below command" });
-    pre(centeredBlock, { innerHTML: `<code>git clone --depth 1 https://github.com/morganbenavidez/summit temp_project && mv temp_project your_project_name && cd your_project_name && rm -rf .git && bash setup.sh</code>` });
-    p(centeredBlock, { innerHTML: `Or manually download the file: ` });
-    a(centeredBlock, { href: "https://github.com/morganbenavidez/summit/blob/main/summit.js", target: "_blank", innerHTML: "Summit.js" });
-    
-    // Step 2: Include Summit.js
-    h3(centeredBlock, { innerHTML: "Step 2: Include Summit.js in Your Project" });
-    p(centeredBlock, { innerHTML: "Add Summit.js to your project by including it in your HTML file:" });
-    pre(centeredBlock, { innerHTML: `&lt;script src="path/to/summit.js"&gt;&lt;/script&gt;` });
-    
-    // Step 3: Initialize Summit.js
-    h3(centeredBlock, { innerHTML: "Step 3: Initialize Summit.js" });
-    p(centeredBlock, { innerHTML: "Ensure that Summit.js is loaded by calling its initialization function in your JavaScript file:" });
-    pre(centeredBlock, { innerHTML: `<code>
-        document.addEventListener('DOMContentLoaded', function() {
-        console.log('Summit.js Loaded!');
+
+    // Utility to add structured cards
+    const addDocCard = (title, buildContentFn) => {
+        const card = div(wrapper, { class: "doc_card" });
+        h2(card, { class: "doc_h3", innerHTML: title, id: title.replace(/[^\w]/g, "_")});
+        buildContentFn(card);
+    };
+
+    // === OVERVIEW ===
+
+    addDocCard("Overview", (card) => {
+        p(card, { class: "doc_p", innerHTML: `Summit is a full JavaScript + Python (Flask) Single Page Application (SPA) framework. It provides dynamic routing, UI construction through structured JS helpers, and a frontend-backend-frontend AJAX pipeline for communication via Flask.` });
+        h3(card, { class: "doc_h3", innerHTML: "Your Summit Project" });
+        p(card, {
+            class: "doc_p",
+            innerHTML: `Summit follows a simple, modular folder layout. Each file has a focused responsibility.`
         });
-        </code>` 
+    
+        const structureBlock = p(card, {});
+        code(structureBlock, {
+            innerHTML: highlightCode(`
+    your_project_name/
+    │
+    ├── static/
+    │   ├── css/
+    │   │   └── summit.css             ← All styles
+    │   ├── js/
+    │   │   ├── project.js             ← SPA routing, state, logic
+    │   │   ├── summit.js              ← Element builders, layout helpers
+    │   │   └── summit_ajax.js         ← AJAX pipeline
+    │   └── images/                    ← All images here
+    │
+    ├── templates/
+    │   └── index.html                 ← Only needed once – Summit renders into it
+    │
+    ├── app.py                         ← Flask routes (keep minimal)
+    ├── summit.py                      ← Backend logic + job handlers
+    └── .env                           ← API keys, secrets, env vars
+    `)
+        });
+    
+        h3(card, { class: "doc_h3", innerHTML: "What Goes Where?" });
+    
+        ul(card, {});
+        li(card, { innerHTML: `<strong>project.js:</strong> Manages client routing, navigation, and dynamic page loading.` });
+        li(card, { innerHTML: `<strong>summit.js:</strong> Contains all reusable UI helpers like <code>div()</code><code>input()</code>and layout generators.` });
+        li(card, { innerHTML: `<strong>summit_ajax.js:</strong> Full AJAX pipeline (package → validate → request → handle).` });
+        li(card, { innerHTML: `<strong>app.py:</strong> Should only have route declarations <code>/</code> and <code>/ajax_receive</code>` });
+        li(card, { innerHTML: `<strong>summit.py:</strong> All backend job logic is routed here from /ajax_receive and is handled via <code>ajax_process()</code>` });
+        li(card, { innerHTML: `<strong>.env:</strong> Stores your API keys, tokens, and config – never push to GitHub.` });
+    
+        p(card, { class: "doc_p", innerHTML: `Summit injects everything dynamically. You never need to modify: <code>index.html</code>` });
     });
     
-    // Step 4: Start Using Summit.js
-    h3(centeredBlock, { innerHTML: "Step 4: Start Using Summit.js" });
-    p(centeredBlock, { innerHTML: "You can now use Summit.js features such as navigation, state management, and UI utilities." });
 
-    hr(centeredBlock, { innerHTML: "" });  // <-- HR inserted
-    // Handling Form Data and Validation
-    h2(centeredBlock, { id: "At_the_start", innerHTML: "Handling Form Data and Validation" });
-   
-    p(centeredBlock, { innerHTML: "Summit.js includes built-in utilities to help manage form data and validate inputs efficiently." });
-         
-    // Global Variables
-    h3(centeredBlock, { innerHTML: "Global Variables" });
-    p(centeredBlock, { innerHTML: "Summit.js includes global variables to store user selections and validate email formats." });
-    pre(centeredBlock, { innerHTML: `<code>
-        // Create an object to store selected files globally
-        const fileSelections = {};
+    // === STATE MANAGEMENT & ROUTING ===
+    addDocCard("1. State Management & Routing", (card) => {
+        h3(card, { class: "doc_h3", innerHTML: "Core Navigation Flow" });
+        ul(card, {});
+        li(card, { innerHTML: "<strong>Startup:</strong> DOMContentLoaded → getPageFromUrl() → loadPage()" });
+        li(card, { innerHTML: "<strong>Navigation:</strong> navigate('page-name') → loadPage('page-name')" });
+        li(card, { innerHTML: "<strong>Browser back/forward:</strong> popstate event → loadPage(savedPage)" });
+
+        h3(card, { class: "doc_h3", innerHTML: "State Functions" });
+        ul(card, {});
         
-        // Validate email format using regex
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        </code>` 
-    });
-         
-    ul(centeredBlock, {});
-    li(centeredBlock, { innerHTML: "<strong>fileSelections:</strong> An object that holds the selected files from file inputs.                                                                 " });
-    li(centeredBlock, { innerHTML: "<strong>emailPattern:</strong> A regular expression used to validate email formats.                                                                              " });
-         
-    // Form Submission and AJAX Requests
-    h3(centeredBlock, { innerHTML: "Form Submission and AJAX Requests" });
-         
-    // testJsonOnly() - Sending JSON Data
-    h4(centeredBlock, { innerHTML: "testJsonOnly() – Sending JSON Data" });
-    p(centeredBlock, { innerHTML: "The <just_fn>testJsonOnly()</just_fn> function collects input values from specified form elements and sends them to the server as a JSON payload." });
-    pre(centeredBlock, { innerHTML: `<code>
-        function testJsonOnly() {
-            // List of the ids of elements you want to include
-            let formElements = ["username", "email"];
-            let { data, responseType } = ajax_package(formElements, 'json_only', 'json_1');
-            ajax_request(data, responseType);
-        }
-        </code>` 
+        li(card, { class: "doc_p", innerHTML: `<strong>navigate(page):</strong> Pushes new URL to history and triggers page load.` });
+        p(card, { innerHTML: `For single-page routing.` });
+        code(card, {innerHTML: highlightCode(`a(parent, {href: "javascript:navigate('dashboard')};`)})
+        
+        li(card, { class: "doc_p", innerHTML: `<strong>loadPage(page):</strong> Switch-based router that calls your page loader.` });
+        code(card, {innerHTML: highlightCode(`case 'about':
+    titleContent = "About";
+    metaContent = "Learn about us";
+    loadAboutPage(titleContent, metaContent);`)});
+
+        li(card, { class: "doc_p", innerHTML: `<strong>updatePageState(page):</strong> Updates localStorage, sets data-page, and scrolls to top.` });
+
     });
 
-    const gettingStarted = div(centeredBlock, { id: 'gettingStarted' });
-    p(gettingStarted);
-         
-    p(centeredBlock, { innerHTML: "This function performs the following tasks:" });
-    ul(centeredBlock, {});
-    li(centeredBlock, { innerHTML: "Defines an array of form element IDs (<just_fn>[\"username\", \"email\"]</just_fn>) whose values need to be sent.                                                                      " });
-    li(centeredBlock, { innerHTML: "Packages the data using <just_fn>ajax_package()</just_fn>, specifying the mode as <just_fn>'json_only'</just_fn> and job type as <just_fn>'json_1'</just_fn>.                                                               " });
-    li(centeredBlock, { innerHTML: "Calls <just_fn>ajax_request()</just_fn> to send the packaged data to the server.                                                                                               " });
-         
-    p(centeredBlock, { innerHTML: "This function is useful when submitting simple form data (e.g., username and email) in JSON format without including files or complex data structures.                                                               " });
-     
+    // === PAGE LIFECYCLE ===
+    addDocCard("2. Page Lifecycle Functions", (card) => {
+        ul(card, {})
+        li(card, { class: "doc_p", innerHTML: "<strong>#centered_block:</strong> All dynamic content is injected here." });
+        li(card, { class: "doc_p", innerHTML: `<strong>startOffAPage(title, meta):</strong> Wipes #outer_block, sets up #centered_block, inserts new &lt;title&gt; and &lt;meta&gt;.` });
+        li(card, { class: "doc_p", innerHTML: "<strong>clearCenteredBlock(component):</strong> Remove all inner content from a container." });
+        li(card, { class: "doc_p", innerHTML: "<strong>clearDynamicHeadElements():</strong> Clears all elements in <head> not tagged with data-static='true'" });
+        li(card, { innerHTML: `<strong>titleAndMeta(headBlock, title, meta):</strong> Appends title and meta to 'head'. Sets page metadata for SEO.` });
+        li(card, { class: "doc_p", innerHTML: `<strong>buildNavBar(type):</strong> Inserts dynamic nav for 'main', 'dashboard', or 'docs'.` });
+        li(card, { class: "doc_p", innerHTML: `<strong>buildFooter():</strong> Appends your site’s footer.` });
+        li(card, { class: "doc_p", innerHTML: "<strong>appendHtmlToParent(htmlString, parent):</strong> Raw HTML injection." });
+    });
 
-    hr(centeredBlock, { innerHTML: "" });  // <-- HR inserted
-    // Page Initialization and Navigation
-    h2(centeredBlock, { id: "page-initialization", innerHTML: "1. Page Initialization and Navigation" });
-  
-
-    p(centeredBlock, { innerHTML: "These functions handle page loading and navigation without refreshing the page." });
+    // === SPA STRUCTURE ===
+    addDocCard("4. SPA Structure (index.html)", (card) => {
+        // pre()
+        const structure = p(card, {});
+        code(structure, {innerHTML: highlightCode(`
+<body id="index_body" data-page="home">
+<div id="outer_block">
+    <div id="centered_block"> </div>
+</div>
+</body>`)});
+        p(card, { class: "doc_p", innerHTML: "Summit injects and rebuilds content dynamically using JavaScript, so full-page reloads are never needed." });
+        p(card, { class: "doc_p", innerHTML: `The <strong>#centered_block</strong> is cleared and rebuilt every time you navigate. No full reloads.` });
+        p(card, { class: "doc_p", innerHTML: `This structure powers fluid, seamless transitions with full control.` });
+    });
+    // === SPA ELEMENT CREATION REFERENCE ===
+    addDocCard("5. Element Creation", (card) => {
+        // Overview
+        p(card, { class: "doc_p", innerHTML: "No static HTML required."})
+        p(card, { class: "doc_p", innerHTML: "Summit is a declarative SPA framework. You build your entire UI using helper functions like <code>div(parent, {attrs})</code>" });
         
-    h3(centeredBlock, { innerHTML: "DOMContentLoaded Event Listener" });
-    pre(centeredBlock, { innerHTML: `<code>
-        document.addEventListener('DOMContentLoaded', function() {
-            const page = getPageFromUrl();
-            loadPage(page);
+        const this_p = p(card, { class: "doc_p", innerHTML: "Use one-liner functions to build any HTML tag. Format:" });
+        code(this_p, {innerHTML: highlightCode(`tagName(parent, {id: 'your_id', class: 'your_class', etc...})`)})
+
+        p(card, { innerHTML: "<code>div, p, h1–h6, input, button, form, select, table, ul, li, etc...</code>" });
+
+        // Layout
+        h3(card, { class: "doc_h3", innerHTML: "Layout Helpers" });
+        p(card, { class: "doc_p", innerHTML: "Summit provides semantic wrappers to apply row/column logic without writing raw Bootstrap." });
+        // pre (
+        const layoutBlock = p(card, {});
+        code(layoutBlock, {innerHTML: highlightCode(`const r = row(wrapper);
+const c = col(r, { class: "col-md-6" });
+`)});
+        // Complex Elements
+        h3(card, { class: "doc_h3", innerHTML: "Prebuilt Interactive Inputs" });
+        ul(card, {});
+        li(card, { innerHTML: "<strong>createSelectWithOptions:</strong> Custom dropdown generator" });
+        li(card, { innerHTML: "<strong>createCheckboxesWithOptions / createRadioButtonsWithOptions:</strong> Build grouped input sets" });
+
+        // Custom Components
+        h3(card, { class: "doc_h3", innerHTML: "Custom Components (FULL_MODULAR)" });
+        p(card, { class: "doc_p", innerHTML: "Summit encourages building full modular UI blocks that inject themselves and handle logic." });
+        //pre(
+        const modularBlock = p(card, {});
+        code(modularBlock, {innerHTML: highlightCode(`function login_box101(parent) {
+    const box = div(parent, { id: "login_box101" });
+    h1(box, { innerHTML: "Login" });
+    const f = form(box, { id: "login_form101", onsubmit: "return submitLoginForm101();" });
+    input(f, { id: "email101", type: "email", placeholder: "Email" });
+    input(f, { id: "password101", type: "password", placeholder: "Password" });
+    input(f, { type: "submit", value: "Log In" });
+}
+
+function submitLoginForm101() {
+    let formElements = ["email101", "password101"];
+    let { data, responseType } = ajax_package(formElements, 'json_only', 'login101');
+    ajax_request(data, responseType);
+    return false;
+}
+`)});
+        p(card, { class: "doc_p", innerHTML: "You can handle the CSS for your Custom Components in-line (fully modular) or in summit.css" });
+
+
+        // Utility Functions
+        //h3(card, { class: "doc_h3", innerHTML: "Page-Level Utilities" });
+        //ul(card, {});
+        
+        
+    });
+
+    addDocCard("6A. AJAX Concepts", (card) => {
+        h3(card, { class: "doc_h3", innerHTML: "Structured Pipeline" });
+        p(card, {
+            class: "doc_p",
+            innerHTML: `Summit uses a modular AJAX pipeline that keeps backend logic simple, frontend code clear, and the interface responsive.`
         });
-        </code>` 
-    });
-    p(centeredBlock, { innerHTML: "When the page loads, it calls <just_fn>getPageFromUrl()</just_fn> to determine the current page. Then, <just_fn>loadPage(page)</just_fn> dynamically loads the content for that page." });
+    
+        const flowBlock = p(card, {});
+        code(flowBlock, {
+            innerHTML: highlightCode(`
+→ Frontend: ajax_package → ajax_validate → ajax_request
+→ Flask: ajax_receive → ajax_process
+→ Frontend: ajax_handle`)
+        });
+
+        h3(card, { class: "doc_h3", innerHTML: "GATHER → VALIDATE → PROCESS → HANDLE" });
+        ul(card, {});
+        li(card, { innerHTML: "<strong>GATHER:</strong> Collect input data and files using formElements or createFileInput." });
+        li(card, { innerHTML: "<strong>VALIDATE:</strong> Add validation logic to <code>ajax_validate()</code> for your <strong>mode</strong> and <strong>job</strong>." });
+        li(card, { innerHTML: "<strong>PROCESS:</strong> Handle backend logic in Python inside <code>ajax_process()</code>" });
+        li(card, { innerHTML: "<strong>HANDLE:</strong> Receive and process result in <code>ajax_handle()</code>" });
+
+        h3(card, { class: "doc_h3", innerHTML: "Customize Only These:" });
+        //ul(card, {});
+        p(card, { innerHTML: "<code>ajax_validate()</code> (frontend): Check input before sending" });
+        p(card, { innerHTML: "<code>ajax_process()</code> (backend): Route to your custom logic" });
+        p(card, { innerHTML: "<code>ajax_handle()</code> (frontend): Handle response by job and mode" });
+
+        h3(card, { class: "doc_h3", innerHTML: "Do Not Modify:" });
+        //ul(card, {});
+        p(card, { innerHTML: "<code>ajax_package()</code>: Builds the data payload and calls ajax_validate" });
+        p(card, { innerHTML: "<code>ajax_request()</code>: Sends the AJAX request" });
+        p(card, { innerHTML: "<code>ajax_receive()</code>: Flask route that dispatches to ajax_process" });
+
+    
+        h3(card, { class: "doc_h3", innerHTML: "What's a Job?" });
+        p(card, {
+            class: "doc_p",
+            innerHTML: `<code>job</code> tells the backend what task to run. Examples: <code>"register_user"</code> <code>"ping"</code> <code>"save_settings"</code>`
+        });
+    
+        h3(card, { class: "doc_h3", innerHTML: "What's a Mode?" });
+        p(card, {
+            class: "doc_p",
+            innerHTML: `<code>mode</code> tells the frontend and backend how to format the data.`
+        });
+    
+        //ul(card, {});
+        p(card, { innerHTML: "<code>simple_post</code>: No data, just a job flag" });
+        p(card, { innerHTML: "<code>json_only</code>: Send JSON from input fields" });
+        p(card, { innerHTML: "<code>single_file</code>: Upload a file" });
+        p(card, { innerHTML: "<code>single_file_and_json</code>: File + metadata" });
+        p(card, { innerHTML: "<code>multiple_files</code>: Upload a file" });
+        p(card, { innerHTML: "<code>folder_and_json</code>: Folder + metadata" });
         
-    h3(centeredBlock, { innerHTML: "getPageFromUrl() – Determines the Page to Load" });
-    pre(centeredBlock, { innerHTML: `<code>
-        function getPageFromUrl() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get("page") || document.body.getAttribute('data-page') || "home";
-        }
-        </code>` 
     });
-    p(centeredBlock, { innerHTML: "This function extracts the <just_fn>page</just_fn> parameter from the URL. If no <just_fn>page</just_fn> is provided, it defaults to the <just_fn>data-page</just_fn> attribute in <just_fn>&lt;body&gt;</just_fn>, or \"home\"." });
+    addDocCard("6B. Full AJAX Pipeline", (card) => {
+        h3(card, { class: "doc_h3", innerHTML: "1 Gather Input" });
+        p(card, {
+            class: "doc_p",
+            innerHTML: `Summit gathers and validates your input with <code>ajax_package()</code>.`
+        });
+        const packBlock = p(card, {});
+        code(packBlock, {
+            innerHTML: highlightCode(`let formElements = ["username", "email"]
+let { data, responseType } = ajax_package(formElements, "json_only", "register_user")`)
+        });
+    
+        h3(card, { class: "doc_h3", innerHTML: "2 Send the Request" });
+        const sendBlock = p(card, {});
+        code(sendBlock, {
+            innerHTML: highlightCode(`ajax_request(data, responseType)`)
+        });
+    
+        h3(card, { class: "doc_h3", innerHTML: "3 Backend Entry Point" });
+        const routeBlock = p(card, {});
+        code(routeBlock, {
+            innerHTML: highlightCode(`@app.route('/ajax_receive', methods=['POST'])
+def ajax_receive():
+    backend_flag = request.form.get("backend_flag") or request.json.get("backend_flag")
+    job = request.form.get("job") or request.json.get("job")
+    file = request.files.get("file", None)
+    data = request.form or request.json
+    return jsonify(ajax_process(file, backend_flag, job, data))`)
+        });
+    
+        h3(card, { class: "doc_h3", innerHTML: "4 Backend Dispatcher" });
+        const dispatchBlock = p(card, {});
+        code(dispatchBlock, {
+            innerHTML: highlightCode(`def ajax_process(file, backend_flag, job, data=False):
+    if backend_flag == 'json_only':
+        if job == 'register_user':
+            return register_user(data)
+        elif job == 'json_1':
+            return process_json_1(file, backend_flag, job)
+        elif job == 'ping':
+            return handle_ping(backend_flag, job)
+    return { "success": False, "message": "Invalid request" }, 400`)
+        });
+    
+        h3(card, { class: "doc_h3", innerHTML: "5 Define Your Backend Jobs" });
         
-    h3(centeredBlock, { innerHTML: "navigate(page) – Handles Internal Navigation" });
-    pre(centeredBlock, { innerHTML: `<code>
-        function navigate(page) {
-            history.pushState({ page }, "", "?page=" + page);
-            loadPage(page);
-        }
-        </code>` 
-    });
-    p(centeredBlock, { innerHTML: "Updates the URL without reloading using <just_fn>history.pushState()</just_fn>. Calls <just_fn>loadPage(page)</just_fn> to dynamically load the selected page." });
-    hr(centeredBlock, { innerHTML: "" });  // <-- HR inserted
-    // Page Loading and Content Handling
-    h2(centeredBlock, { id: "page-loading", innerHTML: "2. Page Loading and Content Handling" });
-   
+        const fn1 = p(card, {});
+        code(fn1, {
+            innerHTML: highlightCode(`def handle_ping(backend_flag, job):
+    return {"success": True, "backend_flag": backend_flag, "job": job, "message": "Pong!"}, 200`)
+        });
+    
+        const fn2 = p(card, {});
+        code(fn2, {
+            innerHTML: highlightCode(`def process_json_1(file, backend_flag, job):
+    username = file.get("username", "").strip()
+    email = file.get("email", "").strip()
+    if not username or not email:
+        return {"success": False, "backend_flag": backend_flag, "job": job, "message": "Missing required fields (username, email)"}, 400
+    return {"success": True, "backend_flag": backend_flag, "job": job, "message": "JSON processed successfully", "username": username, "email": email}, 200`)
+        });
+    
+        h3(card, { class: "doc_h3", innerHTML: "6 Handle the Response" });
+        const handleBlock = p(card, {});
+        code(handleBlock, {
+            innerHTML: highlightCode(`function ajax_handle(responseType, response) {
+    let status_code = null
+    if (Array.isArray(response)) {
+        status_code = response[1]
+        response = response[0]
+    }
 
-    h3(centeredBlock, { innerHTML: "loadPage(page) – Determines and Loads the Requested Page" });
+    if (!response.job || !response.backend_flag) return
 
+    let mode = response.backend_flag
+    let job = response.job
 
-    pre(centeredBlock, { innerHTML: `<code>
-        function loadPage(page) {
-            let titleContent = '';
-            let metaContent = '';
-            
-            switch (page) {
-                case 'home':
-                    titleContent = 'Summit Documentation';
-                    metaContent = 'Documentation for the Summit Framework';
-                    loadHomePage(titleContent, metaContent);
-                    break;
-                case 'docs':
-                    titleContent = 'Summit Docs';
-                    metaContent = 'Learn how to use the Summit Framework';
-                    loadDocsPage(titleContent, metaContent);
-                    break;
+    switch (mode) {
+        case 'simple_post':
+            switch (job) {
+                case 'ping':
+                    console.log(response.message)
+                    return
                 default:
-                    titleContent = 'Summit Documentation';
-                    metaContent = 'Documentation for the Summit Framework';
-                    loadHomePage(titleContent, metaContent);
-                    break;
+                    console.log('simple_post handle default')
+                    return
             }
-                updatePageState(page);
-        }
-        </code>` 
-    });
 
-    // Page Loading Extension
+        case 'json_only':
+            switch (job) {
+                case 'json_1':
+                    if (response.success) {
+                        console.log('Username: ', response.username)
+                        return
+                    }
+                default:
+                    console.log('json_only handle default')
+                    return
+            }
 
- 
-    p(centeredBlock, { innerHTML: "Uses a switch statement to determine which page to load and calls the appropriate function." });
-    
-    hr(centeredBlock, { innerHTML: "" });  // <-- HR inserted
-    // Load Home Page Function
-    h2(centeredBlock, { id: "loadPage-function", innerHTML: "3. loadHomePage(titleContent, metaContent) – Loads Home Page" });
-
-    pre(centeredBlock, { innerHTML: `<code>
-        function loadHomePage(titleContent, metaContent) {
-            const centeredBlock = document.getElementById('centered_block');
-            startOffAPage(centeredBlock, titleContent, metaContent);
-            
-            h1(centeredBlock, { innerHTML: "Welcome to the Summit Documentation" });
-            p(centeredBlock, { innerHTML: "Summit.js is a lightweight and efficient framework designed to simplify the development process." });
-            
-            h2(centeredBlock, { innerHTML: "Why Summit.js?" });
-            ul(centeredBlock, { innerHTML: "<li>Easy state management and navigation.</li><li>Lightweight with minimal dependencies.</li><li>Quick integration with existing projects.</li><li>Enhances development speed and maintainability.</li>" });
-        }
-        </code>` 
-    });
-    p(centeredBlock, { innerHTML: "This function uses helper functions to dynamically create and structure the homepage content." });
-    hr(centeredBlock, { innerHTML: "" });  // <-- HR inserted
-
-    // Understanding ajax_package()
-    h2(centeredBlock, { id: "ajax_package", innerHTML: "4. Understanding the ajax_package() Function" });
-   
-    p(centeredBlock, { innerHTML: "The <just_fn>ajax_package()</just_fn> function is responsible for preparing data before making an AJAX request. This function determines the format in which data will be sent to the backend, whether it's JSON, a single file, or multiple files." });
-                
-    h3(centeredBlock, { innerHTML: "Function Breakdown" });
-    pre(centeredBlock, { innerHTML: `<code>
-        function ajax_package(formElements, mode, job) {
-        </code>` 
-    });
-    ul(centeredBlock, {});
-    li(centeredBlock, { innerHTML: "<strong>formElements:</strong> An array of HTML element IDs whose values need to be included in the request." });
-    li(centeredBlock, { innerHTML: "<strong>mode:</strong> Determines what type of data is being sent (<just_fn>json_only</just_fn>, <just_fn>single_file</just_fn>, etc.)." });
-    li(centeredBlock, { innerHTML: "<strong>job:</strong> A label describing the task, which is sent along with the request to let the backend know what operation needs to be performed." });
-                
-    h3(centeredBlock, { innerHTML: "Step-by-Step Explanation of Different Modes" });
-    h4(centeredBlock, { innerHTML: "1. Simple POST Request (simple_post)" });
-    p(centeredBlock, { innerHTML: "This mode sends a simple JSON object to the backend." });
-    pre(centeredBlock, { innerHTML: `<code>
-        if (mode === 'simple_post') {
-            let jsonData = {
-                backend_flag: "simple_post",
-                job: job
-            };
-            return { data: jsonData, responseType: "json" };
-        }
-        </code>` 
-    });
-    ul(centeredBlock, {});
-    li(centeredBlock, { innerHTML: "<just_fn>backend_flag: \"simple_post\"</just_fn> → Identifies this as a simple POST request.                                                                          " });
-    li(centeredBlock, { innerHTML: "<just_fn>job</just_fn> → Specifies what operation the backend should perform.                                                                                                              " });
-            
-    // Sending JSON Data Mode
-    h4(centeredBlock, { innerHTML: "2. Sending JSON Data (json_only)" });
-    p(centeredBlock, { innerHTML: "This mode collects values from specified form elements and sends them as JSON." });
-    pre(centeredBlock, { innerHTML: `<code>
-        if (mode === 'json_only') {
-            let jsonData = {
-                backend_flag: "json_only",
-                job: job
-            };
-            
-            formElements.forEach(id => {
-                let the_input = document.getElementById(id);
-                if (the_input) {
-                    jsonData[id] = the_input.value.trim();
-                }
-            });
-            
-            // Add Validation
-            ajax_validate(jsonData, job, mode);
-            
-            return { data: jsonData, responseType: "json" };
-        }
-        </code>` 
-    });
-            
-    p(centeredBlock, { innerHTML: "Example scenario:" });
-    pre(centeredBlock, { innerHTML: `<code>
-        ajax_package(["username", "email"], "json_only", "register_user");
-        </code>` 
-    });
-            
-    p(centeredBlock, { innerHTML: "Would return:" });
-    pre(centeredBlock, { innerHTML: `<code>
-        {
-            "backend_flag": "json_only",
-            "job": "register_user",
-            "username": "JohnDoe",
-            "email": "john@example.com"
-        }
-        </code>` 
-    });
-
-    // Sending a Single File
-    h4(centeredBlock, { innerHTML: "3. Sending a Single File (single_file)" });
-    p(centeredBlock, { innerHTML: "This mode packages and sends a file using FormData." });
-    pre(centeredBlock, { innerHTML: `<code>
-        else if (mode === 'single_file') {
-            let formData = new FormData();
-            formData.append("backend_flag", 'single_file');
-            formData.append("job", job);
-
-            formElements.forEach(id => {
-                let input = document.getElementById(id);
-                if (input && input.files.length > 0) {
-                    formData.append(id, input.files[0]);
-                }
-            });
-
-            ajax_validate(formData, job, mode);
-
-            return { data: formData, responseType: "json" };
-        }
-        </code>` 
-    });
-
-    // Sending JSON + Single File
-    h4(centeredBlock, { innerHTML: "4. Sending JSON + Single File (single_file_and_json)" });
-    p(centeredBlock, { innerHTML: "This mode packages both JSON data and a file using FormData." });
-    pre(centeredBlock, { innerHTML: `<code>
-        else if (mode === 'single_file_and_json') {
-            let formData = new FormData();
-            formData.append("backend_flag", 'single_file_and_json');
-            formData.append("job", job);
-
-            formElements.forEach(id => {
-                let input = document.getElementById(id);
-                if (!input) return;
-
-                if (input.type === "file" && input.files.length > 0) {
-                    formData.append(id, input.files[0]);
-                } else {
-                    formData.append(id, input.value.trim());
-                }
-            });
-
-            ajax_validate(formData, job, mode);
-
-            return { data: formData, responseType: "json" };
-        }
-        </code>` 
+        default:
+            console.log('Not a recognized mode - handle error')
+            return
+    } 
+}`)
+        });
     });
     
-    // Sending Multiple Files
-    h4(centeredBlock, { innerHTML: "5. Sending Multiple Files (folder_submission)" });
-    p(centeredBlock, { innerHTML: "This mode packages multiple files using FormData." });
-    pre(centeredBlock, { innerHTML: `<code>
-        else if (mode === 'folder_submission') {
-            var inputId = formElements[0];
-            let formData = new FormData();
-            formData.append("backend_flag", 'multiple_files');
-            formData.append("job", job);
-
-            fileSelections[inputId].forEach(file => {
-                formData.append("multiFiles", file, file.webkitRelativePath);
-            });
-
-            ajax_validate(formData, job, mode);
-
-            return { data: formData, responseType: "json" };
-        }
-        </code>` 
-    });
-      
-    // Sending Multiple Files + JSON
-    h4(centeredBlock, { innerHTML: "6. Sending Multiple Files + JSON (folder_and_json)" });
-    p(centeredBlock, { innerHTML: "This mode packages multiple files along with JSON data." });
-    pre(centeredBlock, { innerHTML: `<code>
-        else if (mode === 'folder_and_json') {
-            var inputId = formElements[0];
-            let formData = new FormData();
-            formData.append("backend_flag", 'folder_and_json');
-            formData.append("job", job);
-
-            formElements.forEach(id => {
-                let input = document.getElementById(id);
-                if (!input) return;
-
-                if (input.type !== "file") {
-                    formData.append(id, input.value.trim());
-                }
-            });
-
-            fileSelections[inputId].forEach(file => {
-                formData.append("multiFiles", file, file.webkitRelativePath);
-            });
-
-            ajax_validate(formData, job, mode);
-
-            return { data: formData, responseType: "json" };
-        }
-        </code>` 
-    });
-      
-    // Conclusion
-    h3(centeredBlock, { innerHTML: "Conclusion" });
-    p(centeredBlock, { innerHTML: "The <just_fn>ajax_package()</just_fn> function is a flexible utility that helps format different types of AJAX requests. It supports:" });
-    // Conclusion
-    h3(centeredBlock, { innerHTML: "Conclusion" });
-    p(centeredBlock, {
-    innerHTML:
-        "The <just_fn>ajax_package()</just_fn> function is a flexible utility that helps format different types of AJAX requests. It supports:",
-    });
-
-    // Create a UL to hold the conclusion list items
-    ul(centeredBlock, {});
-
-    // Each LI uses the class "conclusion_style"
-    li(centeredBlock, { innerHTML: "JSON only", className: "conclusion_style" });
-    li(centeredBlock, { innerHTML: "Single file", className: "conclusion_style" });
-    li(centeredBlock, { innerHTML: "File + JSON", className: "conclusion_style" });
-    li(centeredBlock, { innerHTML: "Multiple files", className: "conclusion_style" });
-    li(centeredBlock, {
-    innerHTML: "Multiple files + JSON",
-    className: "conclusion_style",
-    });
-
-    // Final paragraph also uses "conclusion_style"
-    p(centeredBlock, {
-    innerHTML:
-        "This makes it an all-in-one AJAX data handler for Summit.js!",
-    className: "conclusion_style",
-    });
-
-      
-    hr(centeredBlock, { innerHTML: "" });  // <-- HR inserted
-    // Understanding the ajax_request() Function
-    h2(centeredBlock, { id: "ajax_request", innerHTML: "5. Understanding the ajax_request() Function" });
-   
-
-    p(centeredBlock, { innerHTML: "The <just_fn>ajax_request()</just_fn> function is responsible for making AJAX requests to the server. It handles different types of data (JSON or FormData) and processes responses from the backend." });
-       
-    // Function Breakdown
-    h3(centeredBlock, { innerHTML: "Function Breakdown" });
-    pre(centeredBlock, { innerHTML: `<code>
-        function ajax_request(data, responseType, callback = () => {}) {
-        </code>` 
-    });
-    ul(centeredBlock, {});
-    li(centeredBlock, { innerHTML: "<strong>data:</strong> The payload being sent to the server (can be JSON or FormData).                                                                                       " });
-    li(centeredBlock, { innerHTML: "<strong>responseType:</strong> Specifies how to handle the response (e.g., JSON, files, etc.).                                                                                 " });
-    li(centeredBlock, { innerHTML: "<strong>callback:</strong> An optional function that runs after the request completes.                                                                                        " });
-       
-    // Defining API Endpoint
-    h3(centeredBlock, { innerHTML: "How the Function Works" });
-    p(centeredBlock, { innerHTML: "First, the function defines the API endpoint and the request method:" });
-    pre(centeredBlock, { innerHTML: `<code>
-        let endpoint = '/ajax_receive';
-        let method = 'POST';
-        </code>` 
-    });
-    ul(centeredBlock, {});
-    li(centeredBlock, { innerHTML: "<just_fn>endpoint</just_fn>: The URL where the request is sent (<just_fn>/ajax_receive</just_fn>).                                                                                          " });
-    li(centeredBlock, { innerHTML: "<just_fn>method</just_fn>: The HTTP request method, defaulting to <strong>POST</strong>.                                                                                     " });
-       
-    // Sending an AJAX Request
-    h3(centeredBlock, { innerHTML: "Sending an AJAX Request" });
-    p(centeredBlock, { innerHTML: "The function uses jQuery’s <just_fn>$.ajax()</just_fn> method to send the request:" });
-    pre(centeredBlock, { innerHTML: `<code>
-        $.ajax({
-        type: method || "POST",
-        url: endpoint,
-        data: data instanceof FormData ? data : JSON.stringify(data),
-        contentType: data instanceof FormData ? false : "application/json",
-        processData: !(data instanceof FormData),
-        dataType: "json",
-        </code>` 
-    });
-       
-    // Understanding AJAX Options
-    h4(centeredBlock, { innerHTML: "Understanding the AJAX Options" });
-    ul(centeredBlock, {});
-    li(centeredBlock, { innerHTML: "<just_fn>type: method || \"POST\"</just_fn> → Specifies the request type (default is <strong>POST</strong>).                                                                                " });
-    li(centeredBlock, { innerHTML: "<just_fn>url: endpoint</just_fn> → Defines the target URL for the request.                                                                                                          " });
-    li(centeredBlock, { innerHTML: "<just_fn>data: data instanceof FormData ? data : JSON.stringify(data)</just_fn> → If <just_fn>data</just_fn> is a file, it is sent as-is. If JSON, it is stringified.                                                    " });
-    li(centeredBlock, { innerHTML: "<just_fn>contentType: data instanceof FormData ? false : \"application/json\"</just_fn> → Sets content type appropriately for files or JSON.                                                    " });
-    li(centeredBlock, { innerHTML: "<just_fn>processData: !(data instanceof FormData)</just_fn> → Ensures files are not processed incorrectly.                                                    " });
-    li(centeredBlock, { innerHTML: "<just_fn>dataType: \"json\"</just_fn> → Expects the response in JSON format.                                                                                     " });
-       
-    // Handling Success Responses
-    h3(centeredBlock, { innerHTML: "Handling Success Responses" });
-    p(centeredBlock, { innerHTML: "If the request is successful, the function processes the response:" });
-    pre(centeredBlock, { innerHTML: `<code>
-        success: function(response) {
-        callback(response);
-        ajax_handle(responseType, response);
-        }
-        </code>` 
-    });
-    ul(centeredBlock, {});
-    li(centeredBlock, { innerHTML: "<just_fn>callback(response)</just_fn> → Calls the optional function provided by the user to process the response.                                                    " });
-    li(centeredBlock, { innerHTML: "<just_fn>ajax_handle(responseType, response)</just_fn> → Sends the response to the <just_fn>ajax_handle()</just_fn> function for further processing.                                                    " });
-       
-    // Handling Errors
-    h3(centeredBlock, { innerHTML: "Handling Errors" });
-    p(centeredBlock, { innerHTML: "If the request fails, the function logs the error and returns a failure message:" });
-    pre(centeredBlock, { innerHTML: `<code>
-        error: function(xhr, status, error) {
-        console.error("AJAX Error:", status, error);
-        callback({ success: false, error: "Request failed: " + error });
-        }
-        </code>` 
-    });
-    ul(centeredBlock, {});
-    li(centeredBlock, { innerHTML: "<just_fn>console.error()</just_fn> → Logs the error details in the browser console.                                                                                         " });
-    li(centeredBlock, { innerHTML: "<just_fn>callback({ success: false, error: \"Request failed: \" + error })</just_fn> → Calls the callback function with an error message.                                                    " });
-
-
-    h3(centeredBlock, { innerHTML: "Example Use Cases" });
-        
-    // Sending JSON Data
-    h4(centeredBlock, { innerHTML: "1. Sending JSON Data" });
-    pre(centeredBlock, { innerHTML: `<code>
-        let formData = { username: "JohnDoe", email: "john@example.com" };
-        ajax_request(formData, "json", function(response) {
-        console.log("Server Response:", response);
-        });
-        </code>` 
-    });
-    p(centeredBlock, { innerHTML: "<strong>What Happens?</strong>" });
-    ul(centeredBlock, {});
-    li(centeredBlock, { innerHTML: "The data is sent as a JSON object." });
-    li(centeredBlock, { innerHTML: "The callback function logs the server's response." });
-       
-    // Uploading a File
-    h4(centeredBlock, { innerHTML: "2. Uploading a File" });
-    pre(centeredBlock, { innerHTML: `<code>
-        let formData = new FormData();
-        formData.append("profilePic", document.getElementById("profilePic").files[0]);
-
-        ajax_request(formData, "json", function(response) {
-        console.log("File Upload Response:", response);
-        });
-        </code>` 
-    });
-    p(centeredBlock, { innerHTML: "<strong>What Happens?</strong>" });
-    ul(centeredBlock, {});
-    li(centeredBlock, { innerHTML: "The function detects <strong>FormData</strong> and sets 'processData' to 'false'." });
-    li(centeredBlock, { innerHTML: "The file is sent to the backend." });
-       
-    // Conclusion
-    h3(centeredBlock, { innerHTML: "Conclusion" });
-    p(centeredBlock, { innerHTML: "The <just_fn>ajax_request()</just_fn> function is an essential utility in Summit.js, allowing:" });
-    ul(centeredBlock, {});
-    li(centeredBlock, { innerHTML: "Sending JSON data." });
-    li(centeredBlock, { innerHTML: "Uploading single or multiple files." });
-    li(centeredBlock, { innerHTML: "Handling both <strong>success</strong> and <strong>error</strong> responses." });
-    p(centeredBlock, { innerHTML: "By dynamically detecting the data type, it ensures efficient communication between the frontend and backend." });
-      
-    hr(centeredBlock, { innerHTML: "" });  // <-- HR inserted
-    // Helper Functions for Creating HTML Elements
-    h2(centeredBlock, { id: "helper_functions", innerHTML: "6. Helper Functions for Creating HTML Elements" });
-   
-
-    p(centeredBlock, { innerHTML: "Summit.js provides a set of helper functions to dynamically create and append various HTML elements to a parent container." });
-        
-    // Function Overview
-    h3(centeredBlock, { innerHTML: "Function Overview" });
-    p(centeredBlock, { innerHTML: "Each function wraps around the 'createAndAppendElement' method to streamline element creation." });
-        
-    // Creating Basic Elements
-    h4(centeredBlock, { innerHTML: "Creating Basic Elements" });
-    pre(centeredBlock, { innerHTML: `<code>
-        function h1(parent, attributes = {}) {
-            return createAndAppendElement('h1', attributes, parent);
-        }
-
-        function p(parent, attributes = {}) {
-            return createAndAppendElement('p', attributes, parent);
-        }
-
-        function div(parent, attributes = {}) {
-            return createAndAppendElement('div', attributes, parent);
-        }
-        </code>` 
-    });
-    p(centeredBlock, { innerHTML: "These functions allow easy creation of common elements such as headings, paragraphs, and divs." });
-        
-    // Creating Lists
-    h4(centeredBlock, { innerHTML: "Creating Lists" });
-    pre(centeredBlock, { innerHTML: `<code>
-        function ul(parent, attributes = {}) {
-            return createAndAppendElement('ul', attributes, parent);
-        }
-
-        function ol(parent, attributes = {}) {
-            return createAndAppendElement('ol', attributes, parent);
-        }
-
-        function li(parent, attributes = {}) {
-            return createAndAppendElement('li', attributes, parent);
-        }
-        </code>` 
-    });
-    p(centeredBlock, { innerHTML: "Use these to dynamically generate lists within a parent container." });
-        
-    // Creating Forms and Inputs
-    h4(centeredBlock, { innerHTML: "Creating Forms and Inputs" });
-    pre(centeredBlock, { innerHTML: `<code>
-        function form(parent, attributes = {}) {
-            return createAndAppendElement('form', attributes, parent);
-        }
-
-        function input(parent, attributes = {}) {
-            return createAndAppendElement('input', attributes, parent);
-        }
-
-        function button(parent, attributes = {}) {
-            return createAndAppendElement('button', attributes, parent);
-        }
-        </code>` 
-    });
-    p(centeredBlock, { innerHTML: "These functions allow easy form and input creation, making it simple to build interactive elements." });
-        
-    // Creating Tables
-    h4(centeredBlock, { innerHTML: "Creating Tables" });
-    pre(centeredBlock, { innerHTML: `<code>
-        function table(parent, attributes = {}) {
-            return createAndAppendElement('table', attributes, parent);
-        }
-
-        function tr(parent, attributes = {}) {
-            return createAndAppendElement('tr', attributes, parent);
-        }
-
-        function td(parent, attributes = {}) {
-            return createAndAppendElement('td', attributes, parent);
-        }
-        </code>` 
-    });
-    p(centeredBlock, { innerHTML: "Use these functions to dynamically generate tables with rows and columns." });
-        
-    // Creating Multimedia Elements
-    h4(centeredBlock, { innerHTML: "Creating Multimedia Elements" });
-    pre(centeredBlock, { innerHTML: `<code>
-        function img(parent, attributes = {}) {
-            return createAndAppendElement('img', attributes, parent);
-        }
-
-        function video(parent, attributes = {}) {
-            return createAndAppendElement('video', attributes, parent);
-        }
-
-        function audio(parent, attributes = {}) {
-            return createAndAppendElement('audio', attributes, parent);
-        }
-        </code>` 
-    });
-    p(centeredBlock, { innerHTML: "These functions allow for easy media embedding." });
-        
-    // Creating Semantic HTML Elements
-    h4(centeredBlock, { innerHTML: "Creating Semantic HTML Elements" });
-    pre(centeredBlock, { innerHTML: `<code>
-        function nav(parent, attributes = {}) {
-            return createAndAppendElement('nav', attributes, parent);
-        }
-
-        function header(parent, attributes = {}) {
-            return createAndAppendElement('header', attributes, parent);
-        }
-
-        function footer(parent, attributes = {}) {
-            return createAndAppendElement('footer', attributes, parent);
-        }
-        </code>` 
-    });
-    p(centeredBlock, { innerHTML: "Use these functions to improve document structure with semantic HTML elements." });
-        
-    // Conclusion
-    h3(centeredBlock, { innerHTML: "Conclusion" });
-    p(centeredBlock, { innerHTML: "Summit.js provides a robust set of helper functions that make it easy to dynamically create and append HTML elements, improving development efficiency." });
-
-    highlightAllSnippets();
     buildFooter();
+
 }
 
 

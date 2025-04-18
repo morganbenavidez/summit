@@ -75,7 +75,9 @@ code {
     text-align: left;
     white-space: pre; /* Force lines NOT to wrap */
     /* word-wrap: break-word; - Removed to prevent wrapping as requested by `white-space: pre` */
-    background-color: #ffffff; 
+    /*background-color: #ffffff;*/
+    background-color: #1e1e1e;
+    color: #32CD32; /* lime green default */
     border-left: 5px solid #007BA7;
     padding: 1em;
     box-sizing: border-box;
@@ -83,6 +85,7 @@ code {
     /* color: #ffffff; */
     overflow-x: auto;      /* Show horizontal scrollbar only when needed (corrected from 'scroll') */
     scrollbar-width: thin;   /* Thinner scrollbar in Firefox */
+    font-family: monospace;
 }
 
 /* Optional: Show a custom scrollbar in WebKit (Chrome/Safari/Edge) - Base style, applies to all code blocks */
@@ -337,6 +340,17 @@ h1 {
     min-height: 500px;
     padding: 30px 20px;
     text-align: center;
+}
+
+.hero-section2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 30px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
 .hero-logo {
@@ -683,3 +697,76 @@ input:focus, textarea:focus {
     text-align: center;
     font-family: "Courier New", Courier, monospace;
 }
+
+.doc_wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px;
+}
+
+/* Each card still styled the same, but now width is fluid and consistent */
+.doc_card {
+    width: 100%;
+    max-width: 900px;
+    background-color: #f9f8f6;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+
+.doc_h3 {
+    text-align: left;
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+.doc_p, .doc_p2 {
+    text-align: left;
+    margin-bottom: 0;
+}
+
+.leftAlign {
+    text-align: left;
+}
+
+
+/* CODE COLORING */
+pre code {
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: monospace;
+    user-select: text; /* <- Ensures selection works */
+}
+
+/* Color mappings from your keywordColors object */
+.kw-function { color: #0074D9; }
+.kw-let { color: #FF4136; }
+.kw-switch, .kw-case { color: #2ECC40; }
+.kw-break { color: #FF851B; }
+.kw-default { color: #B10DC9; }
+.kw-return { color: #85144B; }
+.kw-const { color: #FFDC00; }
+.kw-var { color: #FFA500; }
+.kw-if, .kw-else { color: #FA8072; }
+.kw-for, .kw-while, .kw-do { color: #2E86C1; }
+.kw-class, .kw-extends, .kw-super, .kw-constructor { color: #F1C40F; }
+.kw-import, .kw-export, .kw-from, .kw-as { color: #9B59B6; }
+.kw-try, .kw-catch, .kw-finally, .kw-throw { color: #CD5C5C; }
+.kw-new { color: #FF1493; }
+.kw-this { color: #48C9B0; }
+.kw-delete { color: #EC7063; }
+.kw-typeof, .kw-instanceof { color: #8E44AD; }
+.kw-in, .kw-of { color: #FF33A8; }
+.kw-null, .kw-true, .kw-false, .kw-undefined { color: #607D8B; }
+.kw-async, .kw-await { color: #FFB6C1; }
+.kw-document { color: #2E8B57; }
+.kw-console-log { color: #FF4500; }
+.kw-git { color: #F1502F; }
+.kw-clone { color: #F39C12; }
+.kw-mv { color: #8E44AD; }
+.kw-cd { color: #16A085; }
+.kw-rm { color: #C0392B; }
+.kw-bash { color: #9B59B6; }

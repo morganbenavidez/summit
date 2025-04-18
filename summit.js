@@ -7,72 +7,106 @@ const fileSelections = {};
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const keywordColors = {
-    // Existing mappings
+    // JS Core
     "function": "#0074D9",
-    "let": "#FF4136",
-    "switch": "#2ECC40",
-    "case": "#2ECC40",
-    "break": "#FF851B",
-    "default": "#B10DC9",
-    "return": "#85144B",
     "const": "#FFDC00",
-    
-    // Added mappings
-    "var": "#FFA500",
-    "if": "#FA8072",
-    "else": "#FA8072",
-    "for": "#2E86C1",
-    "while": "#2E86C1",
-    "do": "#2E86C1",
-    "class": "#F1C40F",
-    "extends": "#F1C40F",
-    "super": "#F1C40F",
-    "constructor": "#F1C40F",
-    "import": "#9B59B6",
-    "export": "#9B59B6",
-    "from": "#9B59B6",
-    "as": "#9B59B6",
-    "try": "#CD5C5C",
-    "catch": "#CD5C5C",
-    "finally": "#CD5C5C",
-    "throw": "#CD5C5C",
+    "let": "#FF4136",
+    "return": "#FF69B4",
     "new": "#FF1493",
-    "this": "#48C9B0",
-    "delete": "#EC7063",
-    "typeof": "#8E44AD",
-    "instanceof": "#8E44AD",
-    "in": "#FF33A8",
-    "of": "#FF33A8",
-    "null": "#607D8B",
-    "true": "#607D8B",
-    "false": "#607D8B",
-    "undefined": "#607D8B",
-    "async": "#FFB6C1",
-    "await": "#FFB6C1",
-    "document": "#2E8B57",
-    "console.log": "#FF4500",
-    "git": "#F1502F",
-    "clone": "#F39C12",
-    "mv": "#8E44AD",
-    "cd": "#16A085",
-    "rm": "#C0392B",
-    "bash": "#9B59B6"
+    "if": "#FF6347",
+    "else": "#FF6347",
+    "true": "#00FA9A",
+    "false": "#00FA9A",
+    "null": "#B0BEC5",
+    "undefined": "#B0BEC5",
+    "await": "#E91E63",
+    "async": "#E91E63",
+    "class": "#F1C40F",
+    "match": "#1ABC9C",
+    "case": "#40E0D0",
+    "default": "#DDA0DD",
+    "typeof": "#9C27B0",
+    "switch": "#29B6F6",
+  
+    // Python
+    "def": "#00CED1",
+    "return": "#FF69B4",
+    "if": "#FF6347",
+    "elif": "#FF6347",
+    "else": "#FF6347",
+    "with": "#00CED1",
+    "as": "#00CED1",
+    "try": "#EF5350",
+    "except": "#EF5350",
+    "finally": "#EF5350",
+    "pass": "#90A4AE",
+    "print": "#FFD700",
+    "import": "#BA68C8",
+    "from": "#BA68C8",
+    "in": "#F06292",
+    "is": "#F06292",
+    
+  
+    // Decorators
+    "@app": "#00CED1",
+    "route": "#00CED1",
+    "methods=['POST'])": "#00CED1",
+  
+    // HTML tags
+    "div": "#00BCD4",
+    "span": "#00BCD4",
+    "form": "#00BCD4",
+    "input": "#00BCD4",
+    "select": "#00BCD4",
+    "option": "#00BCD4",
+    "button": "#00BCD4",
+    "ul": "#00BCD4",
+    "li": "#00BCD4",
+    "p": "#00BCD4",
+    "h1": "#00BCD4",
+    "h2": "#00BCD4",
+    "h3": "#00BCD4",
+    "a": "#00BCD4",
+    "<body": "#00BCD4",
+    "</body>": "#00BCD4",
+    "<div": "#00BCD4",
+    "</div>": "#00BCD4",
+    "meta": "#00BCD4",
+    "title": "#00BCD4",
+    "head": "#00BCD4"
 };
-// Function to wrap keywords in a span with the mapped color
-function highlightCode(code) {
-    Object.keys(keywordColors).forEach(keyword => {
-        // Use word boundaries to match whole words only
-        const re = new RegExp("\\b" + keyword + "\\b", "g");
-        code = code.replace(re, `<span style="color: ${keywordColors[keyword]}">${keyword}</span>`);
+  
+
+function highlightCode(codeText) {
+    const wrapper = document.createElement("span");
+    const words = codeText.split(/(\s+|[{}()[\];,.])/); // split by space and symbols
+
+    words.forEach(word => {
+        const span = document.createElement("span");
+        const keyword = word.trim();
+        const color = keywordColors[keyword];
+
+        if (color) {
+            span.style.color = color;
+            span.textContent = word;
+            wrapper.appendChild(span);
+        } else {
+            wrapper.appendChild(document.createTextNode(word));
+        }
     });
-    return code;
+
+    return wrapper.innerHTML;
 }
-function highlightAllSnippets() { // we just need to call this function at the end of every page where the code snippets are there
+
+
+function highlightAllSnippets() {
     document.querySelectorAll("pre code").forEach(codeBlock => {
-        const rawCode = codeBlock.innerText;
-        codeBlock.innerHTML = highlightCode(rawCode);
+        const raw = codeBlock.textContent; // plain text
+        const highlighted = highlightCode(raw);
+        codeBlock.innerHTML = highlighted; // now safe to use innerHTML
     });
 }
+
 function testJsonOnly() {
     // list of the ids of elements you want to include
     let formElements = ["username", "email"];
@@ -168,6 +202,95 @@ function startOffAPage(titleContent, metaContent) {
     // Adds title and meta to head
     titleAndMeta(headBlock, titleContent, metaContent);
 }
+function standardTopOfPage2(wrapper, html1, html2) {
+    const heroSection2 = div(wrapper, { class: "hero-section2" });
+    h1(heroSection2, { innerHTML: html1, id: 'mainTitle'});
+    p(heroSection2, { innerHTML: html2 });
+}
+
+function buildNavBar(which_type) {
+
+    // Create sticky side nav (desktop) or burger-toggle nav (mobile)
+    const sideNav = div(document.getElementById("outer_block"), { class: "side-nav" });
+  
+    const logo = div(sideNav, { class: "side-logo" });
+    img(logo, {
+      src: "/static/images/summit.png",
+      alt: "Summit Logo",
+      class: "side-logo-img"
+    });
+    h2(logo, { innerHTML: "Summit", class: "side-brand" });
+    
+    if (which_type === 'main') {
+        const linkContainer = div(sideNav, { class: "side-links" });
+        [
+            "Home",
+            "Login",
+            "Documentation"
+        ].forEach((name) => {
+        const link = a(linkContainer, {
+            href: `javascript:navigate('${name.toLowerCase().replace(/\s+/g, "-")}')`,
+            class: "side-link"
+        });
+        link.textContent = name;
+        });
+    }
+    else if (which_type === 'dashboard') {
+        const linkContainer = div(sideNav, { class: "side-links" });
+        [
+            "Home",
+            "Documentation"
+        ].forEach((name) => {
+        const link = a(linkContainer, {
+            href: `javascript:navigate('${name.toLowerCase().replace(/\s+/g, "-")}')`,
+            class: "side-link"
+        });
+        link.textContent = name;
+        });
+    }
+    else if (which_type === 'docs') {
+        const linkContainer = div(sideNav, { class: "side-links" });
+        [
+            "Home",
+            "Login",
+            "Documentation"
+        ].forEach((name) => {
+        const link = a(linkContainer, {
+            href: `javascript:navigate('${name.toLowerCase().replace(/\s+/g, "-")}')`,
+            class: "side-link"
+        });
+        link.textContent = name;
+        });
+
+        a(linkContainer, { href: "#1__State_Management___Routing", innerHTML: "Routing", class: "side-link" });
+        a(linkContainer, { href: "#2__Page_Lifecycle_Functions", innerHTML: "Lifecycle", class: "side-link" });
+        a(linkContainer, { href: "#4__SPA_Structure__index_html_", innerHTML: "Structure", class: "side-link" });
+        a(linkContainer, { href: "#5__Element_Creation", innerHTML: "Elements", class: "side-link" });
+        a(linkContainer, { href: "#6A__AJAX_Concepts", innerHTML: "AJAX Concepts", class: "side-link" });
+        a(linkContainer, { href: "#6B__Full_AJAX_Pipeline", innerHTML: "AJAX Pipeline", class: "side-link" });
+    }
+    
+    const burger = div(document.getElementById("outer_block"), { class: "burger" });
+    burger.innerHTML = "☰";
+    burger.onclick = () => {
+      sideNav.classList.toggle("active");
+    };
+
+}
+
+
+function buildFooter() {
+    // Footer
+    const footer = div(document.getElementById("outer_block"), { class: "footer-centered" });
+    h2(footer, { innerHTML: "Summit", class: "footer-brand" });
+    p(footer, { innerHTML: "Getting you to the Summit.", class: "footer-tagline" });
+  
+    p(footer, {
+      innerHTML: "&copy; 2025 Summit. All rights reserved.",
+      class: "footer-copy"
+    });
+}
+
 // Helper functions to avoid repetition
 function row(container, attributes = {}) {
     attributes.class = `row ${attributes.class || ''}`;
@@ -290,6 +413,9 @@ function svg(parent, attributes = {}) {
 }
 function path(parent, attributes = {}) {
     return createAndAppendElement('path', attributes, parent);
+}
+function code(parent, attributes = {}) {
+    return createAndAppendElement('code', attributes, parent);
 }
 function textarea(parent, attributes = {}) {
     return createAndAppendElement('textarea', attributes, parent);
